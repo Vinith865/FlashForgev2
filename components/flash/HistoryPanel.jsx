@@ -1,0 +1,65 @@
+'use client';
+
+import clsx from 'clsx';
+import { CheckCircle2, XCircle, Clock, Trash2 } from 'lucide-react';
+import EmptyState from '@/components/ui/EmptyState';
+
+const formatBytes = (b) => {
+  if (!b) return '—';
+  const units = ['B', 'KB', 'MB'];
+  const i = Math.min(units.length - 1, Math.floor(Math.log(b) / Math.log(1024)));
+  return `${(b / 1024 ** i).toFixed(i ? 1 : 0)} ${units[i]}`;
+};
+
+const formatDuration = (ms) => (!ms ? '—' : ms < 1000 ? `${ms} ms` : `${(ms / 1000).toFixed(1)} s`);
+
+export default function HistoryPanel({ history, stats, onClear }) {
+  if (!history.length) {
+    return (
+      <EmptyState
+        icon={Clock}
+        title="No flashes yet"
+        description="Every flash you run is logged here — stored locally in your browser, never uploaded."
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-3 px-5 py-4">
+      <div className="grid grid-cols-3 gap-2">
+        {[
+          { label: 'Total', value: stats.total, tone: 'text-slate-200' },
+          { label: 'Success', value: stats.success, tone: 'text-emerald-300' },
+          { label: 'Failed', value: stats.failed, tone: 'text-rose-300' },
+        ].map((s) => (
+          <div key={s.label} className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-center">
+            <p className={clsx('font-mono text-lg font-semibold tabular-nums', s.tone)}>{s.value}</p>
+            <p className="label mt-0.5">{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      <ul className="scroll-thin max-h-64 space-y-1.5 overflow-y-auto pr-1">
+        {history.map((h) => (
+          <li key={h.id} className="flex items-center gap-2.5 rounded-lg border border-white/[0.07] bg-white/[0.02] px-3 py-2">
+            {h.status === 'success' ? (
+              <CheckCircle2 size={14} className="shrink-0 text-emerald-400" />
+            ) : (
+              <XCircle size={14} className="shrink-0 text-rose-400" />
+            )}
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-medium text-slate-200">{h.project}</p>
+              <p className="truncate font-mono text-[10px] text-slate-500">
+                {new Date(h.at).toLocaleString()} · {h.chip || '—'} · {formatBytes(h.bytes)} · {formatDuration(h.durationMs)}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <button onClick={onClear} className="btn-ghost btn-sm w-full">
+        <Trash2 size={12} /> Clear history
+      </button>
+    </div>
+  );
+}
