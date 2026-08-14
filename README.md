@@ -15,7 +15,7 @@ deploys to Vercel in one shot.
 | Deploy | 2 services (Vercel + Render) | 1 Vercel project |
 | Storage | local disk (breaks on serverless) | Vercel Blob, with local-disk dev fallback |
 | Upload size | capped by request body | client-direct to Blob, up to 64 MB |
-| Admin auth | plaintext password in `.env` | PBKDF2-SHA256 hash + HMAC tokens |
+| Admin auth | plaintext password in `.env` | PBKDF2-SHA256 hash + HMAC tokens + TOTP 2FA |
 | UI | basic Tailwind | dark-glass design system, animated |
 | Serial monitor | ✗ | ✓ live, with send + baud selector |
 | Device info | ✗ | ✓ chip, MAC, flash size, crystal, features |
@@ -23,6 +23,8 @@ deploys to Vercel in one shot.
 | Custom firmware | ✗ | ✓ drag-and-drop `.bin` / `.hex` |
 | Search & filters | ✗ | ✓ search, category, board, sort, favourites |
 | Share | ✗ | ✓ deep links + QR codes |
+| Admin editing | ✗ | ✓ edit metadata, per-file management, drafts |
+| Accountability | ✗ | ✓ audit log, failed-login tracking, revoke all sessions |
 
 ---
 
@@ -66,8 +68,10 @@ components/
   admin/AdminConsole.jsx
 hooks/                    useFlasher, useProjects, useFavorites, useFlashHistory
 services/                 serial.js (Web Serial), flash.js (esptool-js + STK500), api.js
-lib/                      store.js (Blob/local), auth.js (PBKDF2 + HMAC), projects.js
-scripts/hash-password.mjs
+lib/                      store.js (Blob/local), auth.js (PBKDF2 + HMAC),
+                          totp.js (RFC 6238), security.js (audit, lockout,
+                          sessions), firmware.js, projects.js
+scripts/hash-password.mjs, scripts/setup-2fa.mjs
 ```
 
 ---
@@ -78,7 +82,7 @@ scripts/hash-password.mjs
 npm install
 
 # generate credentials
-node scripts/hash-password.mjs "your-password"
+node scripts/hash-password.mjs, scripts/setup-2fa.mjs "your-password"
 # paste both lines into .env.local, plus ADMIN_USERNAME=admin
 
 npm run dev      # http://localhost:3000
@@ -135,14 +139,46 @@ For ESP32 boards without auto-reset: hold **BOOT**, tap **RESET**, release **BOO
 
 ---
 
+## Admin console
+
+Sign in at `/admin`.
+
+**Two-factor authentication.** Enrol once with `node scripts/setup-2fa.mjs` — it
+prints a QR code in your terminal for Microsoft Authenticator (or any TOTP app)
+and an `ADMIN_TOTP_SECRET` to paste into Vercel. Login then asks for password
+first, then the 6-digit code.
+
+**Managing firmware**
+
+- Publish a project with any number of `.bin` / `.hex` parts and per-file offsets
+- Edit an existing project's metadata without re-uploading firmware
+- Add, remove, or re-offset a single firmware file in place
+- Save as a **draft** — hidden from the public catalogue until you publish it
+- Delete a project, which removes its stored files too
+
+**Accountability**
+
+- Every sign-in, publish, edit, file change and deletion is recorded in an audit log
+- Failed sign-ins are listed with IP, username and reason
+- **Revoke all** invalidates every issued token everywhere, including your own
+
 ## Security notes
 
 - Admin passwords are stored as **PBKDF2-SHA256, 210k iterations**, never plaintext.
-- Session tokens are **HMAC-SHA256 signed**, 8-hour TTL, verified in constant time.
-- Plaintext `ADMIN_PASSWORD` is accepted **in development only** and hard-refused in production.
+- Second factor is **RFC 6238 TOTP** (SHA-1 / 6 digits / 30s), verified in constant
+  time against a ±1 step window. Implementation is checked against the official
+  RFC test vectors.
+- A code that has been used to sign in **cannot be replayed** — the consumed time
+  step is persisted.
+- **5 failed attempts from one IP within 15 minutes** locks sign-in for 15 minutes.
+- Session tokens are **HMAC-SHA256 signed**, 8-hour TTL, and carry a session epoch
+  so every token can be revoked at once.
+- Plaintext `ADMIN_PASSWORD` is accepted **in development only** and hard-refused in
+  production.
 - Upload filenames are basename-stripped and extension-allowlisted (`.bin`, `.hex`).
 - The local file route resolves and re-checks paths to block traversal.
 - Blob upload tokens are minted only after the admin token is verified server-side.
+- Draft projects 404 on every public endpoint, including manifests.
 
 ## License
 

@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // The stylesheet is loaded with a plain <link>; Next's build-time font
+  // fetch just adds a network round-trip (and fails in offline CI).
+  optimizeFonts: false,
   images: { remotePatterns: [{ protocol: 'https', hostname: '**' }] },
   async headers() {
     return [

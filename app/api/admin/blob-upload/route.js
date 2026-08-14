@@ -24,7 +24,7 @@ export async function POST(request) {
       body,
       request,
       onBeforeGenerateToken: async (_pathname, clientPayload) => {
-        if (!verifyAdminToken(clientPayload || '')) {
+        if (!(await verifyAdminToken(clientPayload || ''))) {
           throw new Error('Admin login required');
         }
         return {

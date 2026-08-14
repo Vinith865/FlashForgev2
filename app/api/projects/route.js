@@ -12,7 +12,8 @@ export async function GET(request) {
   const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
   const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '48', 10) || 48));
 
-  const all = await readProjects();
+  // Drafts are admin-only: they never appear in the public catalogue.
+  const all = (await readProjects()).filter((p) => !p.draft);
   const filtered = filterProjects(all, { search, category, board });
 
   const start = (page - 1) * limit;

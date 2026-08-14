@@ -1,35 +1,25 @@
 import { requireAdmin } from '@/lib/auth';
+import { audit, clientIp } from '@/lib/security';
 import { readProjects, writeProjects, saveFile, usingBlob } from '@/lib/store';
-import { slugify, normaliseOffset, ok, fail } from '@/lib/projects';
+import { slugify, ok, fail } from '@/lib/projects';
+import { collectFirmwareFiles, decodeBase64, extOf, IMAGE_EXT } from '@/lib/firmware';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
-const SAFE_FILENAME = /^[a-zA-Z0-9._-]+$/;
-const FIRMWARE_EXT = new Set(['.bin', '.hex']);
-const IMAGE_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg']);
-
-const extOf = (name) => {
-  const i = String(name).lastIndexOf('.');
-  return i === -1 ? '' : String(name).slice(i).toLowerCase();
-};
-
-const decodeBase64 = (content) =>
-  Buffer.from(String(content || '').replace(/^data:.*?;base64,/, ''), 'base64');
-
-/* ── List ───────────────────────────────────────────────────────────── */
+/* ── List (includes drafts) ─────────────────────────────────────────── */
 
 export async function GET(request) {
-  const denied = requireAdmin(request);
+  const { denied } = await requireAdmin(request);
   if (denied) return denied;
   return ok(await readProjects());
 }
 
-/* ── Create / update ────────────────────────────────────────────────── */
+/* ── Create / replace ───────────────────────────────────────────────── */
 
 export async function POST(request) {
-  const denied = requireAdmin(request);
+  const { denied, claims } = await requireAdmin(request);
   if (denied) return denied;
 
   let body;
@@ -40,23 +30,9 @@ export async function POST(request) {
   }
 
   const {
-    name,
-    description,
-    longDescription,
-    version,
-    category,
-    supportedBoards,
-    tags,
-    flashMode,
-    flashFreq,
-    flashSize,
-    eraseAll,
-    sourceUrl,
-    docsUrl,
-    imageUrl,
-    image,
-    files,
-    uploadedFiles,
+    name, description, longDescription, version, category, supportedBoards, tags,
+    flashMode, flashFreq, flashSize, eraseAll, sourceUrl, docsUrl, imageUrl, image,
+    files, uploadedFiles, draft,
   } = body || {};
 
   const id = slugify(body?.id || name);
@@ -64,48 +40,17 @@ export async function POST(request) {
 
   const boards = Array.isArray(supportedBoards)
     ? supportedBoards.filter(Boolean)
-    : String(supportedBoards || '')
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean);
-
+    : String(supportedBoards || '').split(',').map((s) => s.trim()).filter(Boolean);
   if (!boards.length) return fail('Select at least one supported board');
 
-  /* Firmware files can arrive two ways:
-     1. uploadedFiles → already in Blob (client-direct upload, no size cap)
-     2. files         → base64 payload (local dev / small files)            */
-  const firmwareFiles = [];
-
-  for (const file of Array.isArray(uploadedFiles) ? uploadedFiles : []) {
-    const offset = normaliseOffset(file.offset);
-    if (!file.url) return fail('Uploaded firmware entry is missing its URL');
-    if (!Number.isFinite(offset) || offset < 0) return fail(`Invalid offset for ${file.filename}`);
-    firmwareFiles.push({
-      path: file.url,
-      offset,
-      filename: file.filename || file.url.split('/').pop(),
-      size: Number(file.size) || 0,
-    });
+  let firmwareFiles;
+  try {
+    firmwareFiles = await collectFirmwareFiles({ projectId: id, files, uploadedFiles });
+  } catch (err) {
+    return fail(err.message);
   }
-
-  for (const file of Array.isArray(files) ? files : []) {
-    const filename = String(file.filename || '').split(/[\\/]/).pop();
-    const offset = normaliseOffset(file.offset);
-
-    if (!filename || !SAFE_FILENAME.test(filename)) return fail(`Invalid firmware filename: ${filename || 'missing'}`);
-    if (!FIRMWARE_EXT.has(extOf(filename))) return fail(`Firmware must be a .bin or .hex file: ${filename}`);
-    if (!Number.isFinite(offset) || offset < 0) return fail(`Invalid offset for ${filename}`);
-
-    const buffer = decodeBase64(file.content);
-    if (!buffer.length) return fail(`Empty firmware file: ${filename}`);
-
-    const url = await saveFile(`firmware/${id}/${filename}`, buffer, 'application/octet-stream');
-    firmwareFiles.push({ path: url, offset, filename, size: buffer.length });
-  }
-
   if (!firmwareFiles.length) return fail('Upload at least one firmware file');
 
-  /* Project image */
   let thumbnailUrl = String(imageUrl || '');
   if (image?.content && image?.filename) {
     const ext = extOf(image.filename);
@@ -131,6 +76,7 @@ export async function POST(request) {
     thumbnailUrl,
     docsUrl: String(docsUrl || ''),
     sourceUrl: String(sourceUrl || ''),
+    draft: Boolean(draft),
     firmware: {
       chipFamily: boards,
       flashMode: String(flashMode || 'dio'),
@@ -142,13 +88,15 @@ export async function POST(request) {
     storage: usingBlob() ? 'vercel-blob' : 'local',
     createdAt: existing?.createdAt || new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    downloads: existing?.downloads || 0,
   };
 
-  const next = existing
-    ? projects.map((p) => (p.id === id ? record : p))
-    : [record, ...projects];
+  await writeProjects(existing ? projects.map((p) => (p.id === id ? record : p)) : [record, ...projects]);
+  await audit({
+    action: existing ? 'project.replace' : 'project.create',
+    actor: claims.sub,
+    ip: clientIp(request),
+    detail: `${record.name} v${record.version} · ${firmwareFiles.length} file(s)${record.draft ? ' · draft' : ''}`,
+  });
 
-  await writeProjects(next);
   return Response.json({ success: true, data: record }, { status: existing ? 200 : 201 });
 }
