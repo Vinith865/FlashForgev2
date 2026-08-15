@@ -1,4 +1,4 @@
-# FlashForge — ESP32 & Arduino Web Flasher
+# TE Flasher — ESP32 & Arduino Web Flasher
 
 A premium, browser-based firmware flashing platform. Flash an ESP32 or Arduino
 straight from Chrome over the **Web Serial API** — no drivers, no IDE, no install.

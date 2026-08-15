@@ -1,5 +1,5 @@
 {
-  "name": "esp32-flasher-pro",
+  "name": "te-flasher",
   "version": "2.0.0",
   "private": true,
   "description": "Premium browser-based ESP32 / Arduino firmware flashing platform",

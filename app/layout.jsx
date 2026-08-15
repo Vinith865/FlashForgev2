@@ -2,12 +2,12 @@ import './globals.css';
 import Background from '@/components/layout/Background';
 
 export const metadata = {
-  title: 'FlashForge — ESP32 & Arduino Web Flasher',
+  title: 'TE Flasher — ESP32 & Arduino Web Flasher',
   description:
     'Flash ESP32 and Arduino firmware straight from your browser. No drivers, no IDE, no install — just Web Serial.',
   keywords: ['ESP32', 'Arduino', 'Web Serial', 'firmware', 'flasher', 'esptool'],
   openGraph: {
-    title: 'FlashForge — ESP32 & Arduino Web Flasher',
+    title: 'TE Flasher — ESP32 & Arduino Web Flasher',
     description: 'Browser-based firmware flashing with a built-in serial monitor.',
     type: 'website',
   },

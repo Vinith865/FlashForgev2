@@ -7,12 +7,12 @@ Roughly 10 minutes end to end.
 ## 1 · Push the code to GitHub
 
 ```bash
-cd esp32-flasher-pro
+cd te-flasher
 git init
 git add .
-git commit -m "FlashForge v2"
+git commit -m "TE Flasher v2"
 git branch -M main
-git remote add origin https://github.com/YOUR-USERNAME/esp32-flasher-pro.git
+git remote add origin https://github.com/YOUR-USERNAME/te-flasher.git
 git push -u origin main
 ```
 
@@ -44,7 +44,7 @@ read-only, so we use Blob storage.
 > store, delete it and create a new one.
 
 1. Open your project → **Storage** tab → **Create Database** → **Blob**.
-2. Name it (e.g. `flashforge-firmware`), set access to **Public** → **Create**.
+2. Name it (e.g. `te-flasher-firmware`), set access to **Public** → **Create**.
 3. **Connect** it to this project, all environments.
 
 Vercel injects `BLOB_READ_WRITE_TOKEN` automatically. The app detects it and

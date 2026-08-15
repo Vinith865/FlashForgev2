@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import { Cable, Cpu, Sparkles } from 'lucide-react';
+import BoardArt from './BoardArt';
 
 function Row({ label, value }) {
   return (
@@ -76,6 +77,16 @@ export default function DeviceCard({
           </select>
         </div>
       )}
+
+      <div className="flex items-center gap-3 rounded-xl border border-hairline bg-canvas px-3 py-2.5">
+        <BoardArt chip={chip} size={46} lit={Boolean(chip)} />
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-ink-900">{chip || 'No board connected'}</p>
+          <p className="truncate text-[11px] text-ink-500">
+            {chip ? `${portInfo?.vendor || 'USB'} · ready` : 'Plug in over USB and press Connect'}
+          </p>
+        </div>
+      </div>
 
       <div>
         <div className="mb-2 flex items-center justify-between">

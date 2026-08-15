@@ -1,7 +1,8 @@
 'use client';
 
 import clsx from 'clsx';
-import { ArrowUpRight, Cpu, Star } from 'lucide-react';
+import { ArrowUpRight, Star } from 'lucide-react';
+import BoardArt from './BoardArt';
 
 export default function ProjectCard({ project, selected, favorite, onSelect, onToggleFavorite, onOpenDetail }) {
   const boards = project.supportedBoards || [];
@@ -22,8 +23,8 @@ export default function ProjectCard({ project, selected, favorite, onSelect, onT
             // eslint-disable-next-line @next/next/no-img-element
             <img src={project.thumbnailUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
           ) : (
-            <span className="grid h-full w-full place-items-center text-ink-400">
-              <Cpu size={20} />
+            <span className="grid h-full w-full place-items-center">
+              <BoardArt chip={boards[0]} size={54} />
             </span>
           )}
         </div>

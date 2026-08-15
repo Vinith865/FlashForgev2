@@ -1,5 +1,5 @@
 /*
- * FlashForge test sketch — NodeMCU / ESP8266
+ * TE Flasher test sketch — NodeMCU / ESP8266
  *
  * Blinks the on-board blue LED and prints to serial so you can verify both
  * the flash and the serial monitor in one go.
@@ -21,7 +21,7 @@ void setup() {
 
   Serial.println();
   Serial.println(F("========================================"));
-  Serial.println(F(" FlashForge — ESP8266 blink test"));
+  Serial.println(F(" TE Flasher — ESP8266 blink test"));
   Serial.println(F("========================================"));
   Serial.print(F("Chip ID   : ")); Serial.println(ESP.getChipId(), HEX);
   Serial.print(F("Flash size: ")); Serial.print(ESP.getFlashChipRealSize() / 1024); Serial.println(F(" KB"));

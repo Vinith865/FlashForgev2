@@ -3,16 +3,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import {
-  AlertTriangle, Clock, Eraser, FolderOpen, MonitorDot, Package,
-  PlugZap, RotateCcw, ScrollText, UploadCloud, Zap,
+  AlertTriangle, Clock, Eraser, FolderOpen, Lock, MonitorDot, Package,
+  PlugZap, RotateCcw, ScrollText, Sparkles, UploadCloud, Usb, Zap,
 } from 'lucide-react';
 
 import Header from '@/components/layout/Header';
 import Panel, { PanelHeader } from '@/components/ui/Panel';
-import ProgressBar from '@/components/ui/ProgressBar';
 import Terminal from '@/components/ui/Terminal';
 import EmptyState from '@/components/ui/EmptyState';
 import FilterBar from './FilterBar';
+import StepIndicator from './StepIndicator';
+import FlashProgress from './FlashProgress';
 import ProjectCard from './ProjectCard';
 import ProjectDetail from './ProjectDetail';
 import DropZone from './DropZone';
@@ -72,15 +73,32 @@ export default function FlasherApp() {
 
       <main className="mx-auto max-w-[1600px] px-4 pb-16 pt-8 sm:px-6">
         {/* ── Hero ─────────────────────────────────────────────── */}
-        <section className="mb-7 flex flex-wrap items-start justify-between gap-6 animate-slideUp">
+        <section className="mb-6 flex flex-wrap items-start justify-between gap-6 animate-slideUp">
           <div>
+            <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-[11px] font-semibold text-brand-700">
+              <span className="h-1.5 w-1.5 animate-pulseSoft rounded-full bg-brand-600" />
+              Runs entirely in your browser
+            </span>
             <h1 className="text-4xl font-bold text-ink-900 sm:text-[2.9rem] sm:leading-[1.08]">
               Flash. Verify. Deploy.
             </h1>
             <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-ink-500">
-              Flash firmware to ESP32 and Arduino boards straight from your browser — no drivers,
-              no IDE, no install.
+              Write firmware to ESP32, ESP8266 and Arduino boards straight from this page —
+              no drivers, no IDE, nothing to install.
             </p>
+
+            <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-ink-500">
+              {[
+                { icon: Usb, text: 'Connects over USB with Web Serial' },
+                { icon: Lock, text: 'Firmware never leaves your machine' },
+                { icon: Sparkles, text: 'Built on esptool-js' },
+              ].map((item) => (
+                <li key={item.text} className="inline-flex items-center gap-1.5">
+                  <item.icon size={13} className="text-brand-600" />
+                  {item.text}
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div className="flex gap-3">
@@ -92,6 +110,9 @@ export default function FlasherApp() {
             ))}
           </div>
         </section>
+
+        {/* ── Guided steps ─────────────────────────────────────── */}
+        <StepIndicator current={f.step} className="mb-6 animate-slideUp animate-delay-100" />
 
         {!f.isSupported && (
           <div className="mb-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 animate-slideUp">
@@ -139,11 +160,11 @@ export default function FlasherApp() {
               ) : visible.length === 0 ? (
                 <EmptyState
                   icon={FolderOpen}
-                  title={p.items.length ? 'No projects match your filters' : 'The library is empty'}
+                  title={p.items.length ? 'No projects match your filters' : 'No firmware published yet'}
                   description={
                     p.items.length
                       ? 'Try clearing the search box or switching the board filter.'
-                      : 'Upload firmware from the admin console, or drop a local .bin file to flash it directly.'
+                      : 'You don\u2019t need the library to flash. Drop your own .bin or .hex into the Firmware file panel on the right \u2014 it reads the file locally and never uploads it.'
                   }
                 />
               ) : (
@@ -247,10 +268,12 @@ export default function FlasherApp() {
               />
 
               <div className="space-y-3 border-t border-hairline px-5 py-5">
-                <ProgressBar
-                  value={f.progress}
-                  label={f.progressLabel || (f.status === STATUS.DONE ? 'Flash complete' : 'Flash progress')}
-                  active={f.status === STATUS.FLASHING}
+                <FlashProgress
+                  status={f.status}
+                  progress={f.progress}
+                  label={f.progressLabel}
+                  lastResult={f.lastResult}
+                  onReset={f.reset}
                 />
 
                 <label className="flex cursor-pointer items-center gap-2.5">
@@ -283,11 +306,6 @@ export default function FlasherApp() {
                   </button>
                 </div>
 
-                {f.status === STATUS.DONE && (
-                  <p className="rounded-xl bg-emerald-50 px-3.5 py-2.5 text-xs text-emerald-700">
-                    Done. Open the Monitor tab to watch it boot.
-                  </p>
-                )}
               </div>
             </Panel>
 
@@ -305,7 +323,7 @@ export default function FlasherApp() {
         </div>
 
         <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-hairline pt-6 text-xs text-ink-500">
-          <p>FlashForge · built on esptool-js and the Web Serial API</p>
+          <p>TE Flasher · built on esptool-js and the Web Serial API</p>
           <p className="font-mono">Chrome 89+ · Edge 89+ · Opera 76+ · desktop only</p>
         </footer>
       </main>

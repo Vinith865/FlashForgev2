@@ -1,4 +1,4 @@
-# ESP8266 / NodeMCU blink — FlashForge test firmware
+# ESP8266 / NodeMCU blink — TE Flasher test firmware
 
 A minimal sketch to verify flashing and the serial monitor end to end.
 

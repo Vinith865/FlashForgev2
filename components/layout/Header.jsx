@@ -13,7 +13,7 @@ export default function Header({ status, chip, portInfo }) {
             <Cpu size={18} strokeWidth={2.2} />
           </span>
           <span className="text-[17px] font-semibold tracking-tight text-ink-900">
-            Flash<span className="text-brand-600">Forge</span>
+            TE<span className="text-brand-600"> Flasher</span>
           </span>
         </Link>
 

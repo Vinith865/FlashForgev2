@@ -14,7 +14,7 @@ const secret = generateTotpSecret();
 const uri = buildOtpAuthUri({ secret, account });
 
 console.log('\n─────────────────────────────────────────────────────');
-console.log('  FlashForge · two-factor enrolment');
+console.log('  TE Flasher · two-factor enrolment');
 console.log('─────────────────────────────────────────────────────\n');
 
 try {

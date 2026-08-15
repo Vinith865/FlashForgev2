@@ -55,6 +55,7 @@ export function useFlasher() {
   const [deviceInfo, setDeviceInfo] = useState(null);
   const [portInfo, setPortInfo] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [lastResult, setLastResult] = useState(null);
   const [customFiles, setCustomFiles] = useState([]); // [{file, offset, id}]
   const [eraseAll, setEraseAll] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
@@ -260,6 +261,7 @@ export function useFlasher() {
     const onDone = (result = {}) => {
       setStatus(STATUS.DONE);
       updateProgress(100, 'Complete');
+      setLastResult({ ...result, durationMs: Date.now() - startedAt.current });
       record({
         status: 'success',
         project: label,
@@ -273,6 +275,7 @@ export function useFlasher() {
       if (abortRef.current) return;
       setStatus(STATUS.ERROR);
       updateProgress(0, '');
+      setLastResult(null);
       record({
         status: 'error',
         project: label,
@@ -412,11 +415,17 @@ export function useFlasher() {
     espTarget, setEspTarget,
     status, logs, progress, progressLabel,
     detectedChip, deviceInfo, portInfo,
-    selectedProject, customFiles, eraseAll, setEraseAll,
+    selectedProject, customFiles, eraseAll, setEraseAll, lastResult,
     isSupported,
     monitorLines, monitorBaud, setMonitorBaud, monitorOn,
     history, stats,
     isBusy: status === STATUS.FLASHING || status === STATUS.CONNECTING,
+    step:
+      status === STATUS.IDLE || status === STATUS.CONNECTING
+        ? 1
+        : !selectedProject && customFiles.length === 0
+        ? 2
+        : 3,
     isConnected: status === STATUS.READY || status === STATUS.DONE || status === STATUS.MONITORING || status === STATUS.FLASHING,
     // actions
     connect, reset, inspect, flash, abort,
