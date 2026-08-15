@@ -79,9 +79,8 @@ export default function FlasherApp() {
               <span className="h-1.5 w-1.5 animate-pulseSoft rounded-full bg-brand-600" />
               Runs entirely in your browser
             </span>
-            <h1 className="text-4xl font-bold text-ink-900 sm:text-[2.9rem] sm:leading-[1.08]">
-              Telugu Experiments<br className="hidden sm:block" />{' '}
-              <span className="text-brand-600">Flasher</span>
+            <h1 className="text-[1.9rem] font-bold leading-tight text-ink-900 sm:whitespace-nowrap sm:text-[2.6rem]">
+              Telugu Experiments <span className="text-brand-600">Flasher</span>
             </h1>
             <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-ink-500">
               Write firmware to ESP32, ESP8266 and Arduino boards straight from this page —
@@ -113,7 +112,7 @@ export default function FlasherApp() {
         </section>
 
         {/* ── Guided steps ─────────────────────────────────────── */}
-        <StepIndicator current={f.step} className="mb-6 animate-slideUp animate-delay-100" />
+        <StepIndicator current={f.step} connected={f.isConnected} className="mb-6 animate-slideUp animate-delay-100" />
 
         {!f.isSupported && (
           <div className="mb-6 flex items-start gap-3 rounded-2xl tint-warn px-5 py-4 animate-slideUp">
