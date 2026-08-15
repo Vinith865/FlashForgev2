@@ -44,6 +44,9 @@ const MAX_MONITOR_LINES = 1500;
 export function useFlasher() {
   const [mode, setMode] = useState('esp'); // 'esp' | 'arduino'
   const [board, setBoard] = useState('ESP32');
+  // 'auto' means "trust USB detection"; anything else is the user telling us
+  // what is on the other end of an ambiguous CH340/CP2102 bridge.
+  const [espTarget, setEspTarget] = useState('auto');
   const [status, setStatus] = useState(STATUS.IDLE);
   const [logs, setLogs] = useState([]);
   const [progress, setProgress] = useState(0);
@@ -175,11 +178,14 @@ export function useFlasher() {
     updateProgress(0, 'Connecting…');
 
     try {
-      await connectToDevice(addLog, { mode, baudRate: mode === 'arduino' ? 115200 : 115200 });
+      await connectToDevice(addLog, { mode, baudRate: 115200 });
       setPortInfo(getPortInfo());
 
       updateProgress(10, 'Identifying…');
-      const chip = await detectChip(addLog, { mode, board });
+      const chip = await detectChip(addLog, {
+        mode,
+        board: mode === 'esp' ? espTarget : board,
+      });
       setDetectedChip(chip);
       if (mode === 'esp') setBoard(chip);
 
@@ -192,7 +198,7 @@ export function useFlasher() {
       updateProgress(0, '');
       await disconnect(addLog).catch(() => {});
     }
-  }, [mode, board, addLog, banner, updateProgress]);
+  }, [mode, board, espTarget, addLog, banner, updateProgress]);
 
   const reset = useCallback(async () => {
     setMonitorOn(false);
@@ -305,6 +311,9 @@ export function useFlasher() {
           : await resolveProjectFirmware({
               projectId: selectedProject.id,
               chip: detectedChip || 'ESP32',
+              // A guess from an ambiguous bridge must not hard-fail the
+              // manifest lookup — esptool confirms the real chip anyway.
+              assertChip: espTarget !== 'auto',
               onLog: addLog,
               onProgress,
             });
@@ -323,6 +332,7 @@ export function useFlasher() {
     board,
     detectedChip,
     eraseAll,
+    espTarget,
     addLog,
     banner,
     updateProgress,
@@ -399,6 +409,7 @@ export function useFlasher() {
     // state
     mode, setMode,
     board, setBoard,
+    espTarget, setEspTarget,
     status, logs, progress, progressLabel,
     detectedChip, deviceInfo, portInfo,
     selectedProject, customFiles, eraseAll, setEraseAll,

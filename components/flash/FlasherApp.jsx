@@ -234,6 +234,10 @@ export default function FlasherApp() {
               <DeviceCard
                 mode={f.mode}
                 setMode={f.setMode}
+                espTarget={f.espTarget}
+                setEspTarget={f.setEspTarget}
+                board={f.board}
+                setBoard={f.setBoard}
                 chip={f.detectedChip}
                 portInfo={f.portInfo}
                 deviceInfo={f.deviceInfo}

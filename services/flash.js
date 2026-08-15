@@ -29,9 +29,7 @@ export const formatBytes = (bytes) => {
 
 function selectBuild(manifest, chip) {
   const target = normaliseChip(chip);
-  return (
-    manifest.builds.find((b) => normaliseChip(b.chipFamily) === target) || manifest.builds[0]
-  );
+  return manifest.builds.find((b) => normaliseChip(b.chipFamily) === target) || manifest.builds[0];
 }
 
 async function downloadPart(url, onLog) {
@@ -52,9 +50,9 @@ async function downloadPart(url, onLog) {
   return new Uint8Array(buffer);
 }
 
-export async function resolveProjectFirmware({ projectId, chip, onLog, onProgress }) {
+export async function resolveProjectFirmware({ projectId, chip, assertChip = false, onLog, onProgress }) {
   onLog('Fetching firmware manifest…', 'info');
-  const manifest = await fetchManifest(projectId, chip);
+  const manifest = await fetchManifest(projectId, assertChip ? chip : undefined);
   if (!manifest?.builds?.length) throw new Error('Manifest contains no builds.');
 
   onLog(`Manifest: ${manifest.name} v${manifest.version}`, 'success');

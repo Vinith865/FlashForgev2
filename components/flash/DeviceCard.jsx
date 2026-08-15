@@ -12,7 +12,20 @@ function Row({ label, value }) {
   );
 }
 
-export default function DeviceCard({ mode, setMode, chip, portInfo, deviceInfo, onInspect, disabled, busy }) {
+const ESP_TARGETS = [
+  { value: 'auto', label: 'Auto-detect' },
+  { value: 'ESP32', label: 'ESP32' },
+  { value: 'ESP8266', label: 'ESP8266 / NodeMCU' },
+  { value: 'ESP32-S2', label: 'ESP32-S2' },
+  { value: 'ESP32-S3', label: 'ESP32-S3' },
+  { value: 'ESP32-C3', label: 'ESP32-C3' },
+  { value: 'ESP32-C6', label: 'ESP32-C6' },
+];
+
+export default function DeviceCard({
+  mode, setMode, chip, portInfo, deviceInfo, onInspect, disabled, busy,
+  espTarget, setEspTarget, board, setBoard,
+}) {
   return (
     <div className="space-y-4 px-5 pb-5">
       {/* Target selector */}
@@ -31,6 +44,38 @@ export default function DeviceCard({ mode, setMode, chip, portInfo, deviceInfo, 
           </button>
         ))}
       </div>
+
+      {mode === 'esp' ? (
+        <div>
+          <label className="label mb-1.5 block">Target chip</label>
+          <select
+            value={espTarget}
+            onChange={(e) => setEspTarget(e.target.value)}
+            disabled={busy}
+            className="field"
+          >
+            {ESP_TARGETS.map((t) => (
+              <option key={t.value} value={t.value}>{t.label}</option>
+            ))}
+          </select>
+          {espTarget === 'auto' && (
+            <p className="mt-1.5 text-[11px] leading-relaxed text-ink-500">
+              CH340 and CP2102 adapters are used by both ESP32 and ESP8266 boards,
+              so the chip can&apos;t be read from USB. Pick your board if auto-detect
+              gets it wrong.
+            </p>
+          )}
+        </div>
+      ) : (
+        <div>
+          <label className="label mb-1.5 block">Board</label>
+          <select value={board} onChange={(e) => setBoard(e.target.value)} disabled={busy} className="field">
+            {['Arduino Uno', 'Arduino Nano', 'Arduino Mega'].map((b) => (
+              <option key={b} value={b}>{b}</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div>
         <div className="mb-2 flex items-center justify-between">

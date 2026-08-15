@@ -17,13 +17,10 @@ const CHIP_USB_MAP = {
   '303a:1012': 'ESP32-C3',
   '303a:1101': 'ESP32-C6',
   '303a:1102': 'ESP32-C6',
-  // USB↔UART bridges — chip family unknown, assume classic ESP32
-  '10c4:ea60': 'ESP32', // Silicon Labs CP2102
-  '10c4:ea70': 'ESP32', // CP2105
-  '1a86:7523': 'ESP32', // WCH CH340
-  '1a86:55d4': 'ESP32', // WCH CH9102
-  '0403:6001': 'ESP32', // FTDI FT232
-  '0403:6015': 'ESP32', // FTDI FT231X
+  // Native USB tells us the chip. A plain USB↔UART bridge does not — a
+  // NodeMCU (ESP8266) and an ESP32 DevKit both ship CH340 or CP2102, so the
+  // descriptor is genuinely ambiguous. Those are listed below as null and the
+  // user picks the target, or esptool identifies it at flash time.
   // Arduino
   '2341:0043': 'Arduino Uno',
   '2341:0001': 'Arduino Uno',
@@ -31,6 +28,16 @@ const CHIP_USB_MAP = {
   '2341:0042': 'Arduino Mega',
   '1a86:7522': 'Arduino Nano',
 };
+
+/** Bridges that cannot identify the chip behind them. */
+export const AMBIGUOUS_BRIDGES = new Set([
+  '10c4:ea60', // Silicon Labs CP2102
+  '10c4:ea70', // CP2105
+  '1a86:7523', // WCH CH340
+  '1a86:55d4', // WCH CH9102
+  '0403:6001', // FTDI FT232
+  '0403:6015', // FTDI FT231X
+]);
 
 export const USB_VENDORS = {
   '303a': 'Espressif',
@@ -195,17 +202,26 @@ export async function detectChip(log = console.log, options = {}) {
 
   log('Identifying chip from USB descriptor…', 'info');
   const info = getPortInfo();
-  let chip = 'ESP32';
+  const preferred = options.board && options.board !== 'auto' ? options.board : null;
+  let chip = preferred || 'ESP32';
 
   if (info) {
     if (CHIP_USB_MAP[info.key]) {
       chip = CHIP_USB_MAP[info.key];
-      log(`Detected ${chip} (${info.vendor}).`, 'success');
+      log(`Detected ${chip} over native USB.`, 'success');
     } else if (info.key.startsWith('303a')) {
-      chip = 'ESP32-S3';
+      chip = preferred || 'ESP32-S3';
       log('Espressif native USB — assuming ESP32-S3.', 'warning');
+    } else if (AMBIGUOUS_BRIDGES.has(info.key)) {
+      if (preferred) {
+        log(`${info.vendor} bridge — using your selected target: ${preferred}.`, 'info');
+      } else {
+        log(`${info.vendor} bridge detected. This adapter is used by both ESP32 and`, 'warning');
+        log('ESP8266 boards, so the chip cannot be read from USB alone.', 'warning');
+        log('Assuming ESP32 — pick a target above if this is a NodeMCU/ESP8266.', 'warning');
+      }
     } else {
-      log('Unrecognised adapter — assuming ESP32. The exact chip is confirmed at flash time.', 'warning');
+      log('Unrecognised adapter. The exact chip is confirmed at flash time.', 'warning');
     }
   }
 
