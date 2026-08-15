@@ -80,7 +80,8 @@ export default function FlasherApp() {
               Runs entirely in your browser
             </span>
             <h1 className="text-4xl font-bold text-ink-900 sm:text-[2.9rem] sm:leading-[1.08]">
-              Flash. Verify. Deploy.
+              Telugu Experiments<br className="hidden sm:block" />{' '}
+              <span className="text-brand-600">Flasher</span>
             </h1>
             <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-ink-500">
               Write firmware to ESP32, ESP8266 and Arduino boards straight from this page —
@@ -266,6 +267,24 @@ export default function FlasherApp() {
                 onInspect={f.inspect}
                 disabled={!f.isConnected || f.isBusy || f.mode !== 'esp'}
                 busy={f.isBusy}
+                actions={
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={f.isConnected ? f.reset : f.connect}
+                      disabled={!f.isSupported || f.isBusy}
+                      className="btn-ghost"
+                    >
+                      {f.isConnected ? <><RotateCcw size={14} /> Disconnect</> : <><PlugZap size={14} /> Connect</>}
+                    </button>
+                    <button
+                      onClick={f.status === STATUS.FLASHING ? f.abort : f.flash}
+                      disabled={f.status === STATUS.FLASHING ? false : !canFlash}
+                      className={f.status === STATUS.FLASHING ? 'btn-danger' : 'btn-primary'}
+                    >
+                      {f.status === STATUS.FLASHING ? 'Abort' : <><Zap size={14} /> Flash now</>}
+                    </button>
+                  </div>
+                }
               />
 
               <div className="space-y-3 border-t border-hairline px-5 py-5">
@@ -289,23 +308,6 @@ export default function FlasherApp() {
                   <span className="text-sm text-ink-700">Erase entire flash first</span>
                 </label>
 
-                <div className="grid grid-cols-2 gap-2 pt-1">
-                  <button
-                    onClick={f.status === STATUS.FLASHING ? f.abort : f.flash}
-                    disabled={f.status === STATUS.FLASHING ? false : !canFlash}
-                    className={f.status === STATUS.FLASHING ? 'btn-danger' : 'btn-primary'}
-                  >
-                    {f.status === STATUS.FLASHING ? 'Abort' : <><Zap size={14} /> Flash now</>}
-                  </button>
-
-                  <button
-                    onClick={f.isConnected ? f.reset : f.connect}
-                    disabled={!f.isSupported || f.isBusy}
-                    className="btn-ghost"
-                  >
-                    {f.isConnected ? <><RotateCcw size={14} /> Disconnect</> : <><PlugZap size={14} /> Connect</>}
-                  </button>
-                </div>
 
               </div>
             </Panel>

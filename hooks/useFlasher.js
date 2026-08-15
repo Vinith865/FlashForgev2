@@ -45,9 +45,9 @@ const MAX_MONITOR_LINES = 1500;
 export function useFlasher() {
   const [mode, setMode] = useState('esp'); // 'esp' | 'arduino'
   const [board, setBoard] = useState('ESP32');
-  // 'auto' means "trust USB detection"; anything else is the user telling us
-  // what is on the other end of an ambiguous CH340/CP2102 bridge.
-  const [espTarget, setEspTarget] = useState('auto');
+  // Explicit target. CH340/CP2102 bridges cannot reveal the chip, so guessing
+  // helped nobody — the user picks, and esptool confirms at flash time.
+  const [espTarget, setEspTarget] = useState('ESP32');
   const [status, setStatus] = useState(STATUS.IDLE);
   const [logs, setLogs] = useState([]);
   const [progress, setProgress] = useState(0);
@@ -317,7 +317,7 @@ export function useFlasher() {
               chip: detectedChip || 'ESP32',
               // A guess from an ambiguous bridge must not hard-fail the
               // manifest lookup — esptool confirms the real chip anyway.
-              assertChip: espTarget !== 'auto',
+              assertChip: true,
               onLog: addLog,
               onProgress,
             });

@@ -2,12 +2,12 @@ import './globals.css';
 import Background from '@/components/layout/Background';
 
 export const metadata = {
-  title: 'TE Flasher — ESP32 & Arduino Web Flasher',
+  title: 'Telugu Experiments Flasher — ESP32, ESP8266 & Arduino',
   description:
-    'Flash ESP32 and Arduino firmware straight from your browser. No drivers, no IDE, no install — just Web Serial.',
+    'Flash ESP32, ESP8266 and Arduino firmware straight from your browser. No drivers, no IDE, no install — just Web Serial.',
   keywords: ['ESP32', 'Arduino', 'Web Serial', 'firmware', 'flasher', 'esptool'],
   openGraph: {
-    title: 'TE Flasher — ESP32 & Arduino Web Flasher',
+    title: 'Telugu Experiments Flasher — ESP32, ESP8266 & Arduino',
     description: 'Browser-based firmware flashing with a built-in serial monitor.',
     type: 'website',
     images: [{ url: '/logo.png', width: 512, height: 512, alt: 'TE Flasher' }],

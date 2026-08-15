@@ -14,7 +14,6 @@ function Row({ label, value }) {
 }
 
 const ESP_TARGETS = [
-  { value: 'auto', label: 'Auto-detect' },
   { value: 'ESP32', label: 'ESP32' },
   { value: 'ESP8266', label: 'ESP8266 / NodeMCU' },
   { value: 'ESP32-S2', label: 'ESP32-S2' },
@@ -25,7 +24,7 @@ const ESP_TARGETS = [
 
 export default function DeviceCard({
   mode, setMode, chip, portInfo, deviceInfo, onInspect, disabled, busy,
-  espTarget, setEspTarget, board, setBoard,
+  espTarget, setEspTarget, board, setBoard, actions,
 }) {
   return (
     <div className="space-y-4 px-5 pb-5">
@@ -59,13 +58,10 @@ export default function DeviceCard({
               <option key={t.value} value={t.value}>{t.label}</option>
             ))}
           </select>
-          {espTarget === 'auto' && (
-            <p className="mt-1.5 text-[11px] leading-relaxed text-ink-500">
-              CH340 and CP2102 adapters are used by both ESP32 and ESP8266 boards,
-              so the chip can&apos;t be read from USB. Pick your board if auto-detect
-              gets it wrong.
-            </p>
-          )}
+          <p className="mt-1.5 text-[11px] leading-relaxed text-ink-500">
+            CH340 and CP2102 adapters are shared by ESP32 and ESP8266 boards, so the
+            chip cannot be read from USB — pick the one you have.
+          </p>
         </div>
       ) : (
         <div>
@@ -77,6 +73,8 @@ export default function DeviceCard({
           </select>
         </div>
       )}
+
+      {actions}
 
       <div className="flex items-center gap-3 rounded-xl border border-hairline bg-canvas px-3 py-2.5">
         <BoardArt chip={chip} size={46} lit={Boolean(chip)} />
