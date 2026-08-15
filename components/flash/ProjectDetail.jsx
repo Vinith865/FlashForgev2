@@ -53,10 +53,10 @@ export default function ProjectDetail({ project, open, onClose, onFlash }) {
         <div className="space-y-5">
           {project.thumbnailUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={project.thumbnailUrl} alt="" className="h-40 w-full rounded-xl border border-white/10 object-cover" />
+            <img src={project.thumbnailUrl} alt="" className="h-40 w-full rounded-xl border border-hairline object-cover" />
           )}
 
-          <p className="text-sm leading-relaxed text-slate-300">
+          <p className="text-sm leading-relaxed text-ink-700">
             {project.longDescription || project.description}
           </p>
 
@@ -64,7 +64,7 @@ export default function ProjectDetail({ project, open, onClose, onFlash }) {
             <p className="label mb-2">Supported boards</p>
             <div className="flex flex-wrap gap-1.5">
               {(project.supportedBoards || []).map((b) => (
-                <span key={b} className="chip chip-active">{b}</span>
+                <span key={b} className="chip-tag">{b}</span>
               ))}
             </div>
           </div>
@@ -80,23 +80,23 @@ export default function ProjectDetail({ project, open, onClose, onFlash }) {
 
           <div>
             <p className="label mb-2">Flash layout</p>
-            <div className="overflow-hidden rounded-xl border border-white/10">
+            <div className="overflow-hidden rounded-xl border border-hairline">
               <table className="w-full text-left text-xs">
-                <thead className="bg-white/[0.04] text-slate-500">
+                <thead className="bg-canvas text-ink-500">
                   <tr>
                     <th className="px-3 py-2 font-medium">Offset</th>
                     <th className="px-3 py-2 font-medium">File</th>
                     <th className="px-3 py-2 text-right font-medium">Size</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/[0.06]">
+                <tbody className="divide-y divide-hairline">
                   {(project.firmware?.files || []).map((f, i) => (
-                    <tr key={i} className="text-slate-300">
-                      <td className="px-3 py-2 font-mono text-neon-cyan">
+                    <tr key={i} className="text-ink-700">
+                      <td className="px-3 py-2 font-mono text-brand-600">
                         0x{Number(f.offset).toString(16).padStart(5, '0')}
                       </td>
                       <td className="truncate px-3 py-2 font-mono">{f.filename || f.path.split('/').pop()}</td>
-                      <td className="px-3 py-2 text-right font-mono text-slate-500">
+                      <td className="px-3 py-2 text-right font-mono text-ink-500">
                         {f.size ? `${(f.size / 1024).toFixed(1)} KB` : '—'}
                       </td>
                     </tr>
@@ -104,7 +104,7 @@ export default function ProjectDetail({ project, open, onClose, onFlash }) {
                 </tbody>
               </table>
             </div>
-            <p className="mt-2 font-mono text-[10px] text-slate-600">
+            <p className="mt-2 font-mono text-[10px] text-ink-500">
               mode {project.firmware?.flashMode} · freq {project.firmware?.flashFreq} · size {project.firmware?.flashSize}
             </p>
           </div>
@@ -114,9 +114,9 @@ export default function ProjectDetail({ project, open, onClose, onFlash }) {
           <p className="label">Share</p>
           <QrCode value={shareUrl || 'https://example.com'} size={150} />
           <button onClick={copy} className="btn-ghost btn-sm w-full">
-            {copied ? <><Check size={12} className="text-emerald-400" /> Copied</> : <><Copy size={12} /> Copy link</>}
+            {copied ? <><Check size={12} className="text-emerald-600" /> Copied</> : <><Copy size={12} /> Copy link</>}
           </button>
-          <p className="text-center text-[10px] leading-relaxed text-slate-600">
+          <p className="text-center text-[11px] leading-relaxed text-ink-500">
             Scan to open this project directly on another machine.
           </p>
         </div>

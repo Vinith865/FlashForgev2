@@ -2,18 +2,29 @@
 
 import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { ArrowDownToLine, Copy, Check, Trash2, Pause, Play } from 'lucide-react';
+import { ArrowDownToLine, Check, Copy, Pause, Play, Trash2 } from 'lucide-react';
 
+/**
+ * The console stays dark on a light interface, on purpose: coloured severity
+ * levels are far easier to scan against a dark ground, and it reads as a
+ * distinct "machine output" block rather than more chrome.
+ */
 const TONE = {
-  info: 'text-slate-300',
-  dim: 'text-slate-500',
-  success: 'text-emerald-300',
-  warning: 'text-amber-300',
-  error: 'text-rose-300',
-  bold: 'text-cyan-200 font-semibold',
+  info: 'text-console-text',
+  dim: 'text-console-dim',
+  success: 'text-console-ok',
+  warning: 'text-console-warn',
+  error: 'text-console-err',
+  bold: 'text-console-info font-semibold',
 };
 
-export default function Terminal({ lines = [], onClear, emptyHint = 'Waiting for output…', className, height = 'h-[22rem]' }) {
+export default function Terminal({
+  lines = [],
+  onClear,
+  emptyHint = 'Waiting for output…',
+  className,
+  height = 'h-[22rem]',
+}) {
   const scrollRef = useRef(null);
   const [autoScroll, setAutoScroll] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -31,29 +42,26 @@ export default function Terminal({ lines = [], onClear, emptyHint = 'Waiting for
     } catch {}
   };
 
+  const iconBtn =
+    'rounded-md p-1.5 text-console-dim transition hover:bg-white/10 hover:text-console-text';
+
   return (
-    <div className={clsx('relative overflow-hidden rounded-xl border border-white/10 bg-[#06080D]', className)}>
-      {/* toolbar */}
-      <div className="flex items-center justify-between border-b border-white/[0.07] bg-white/[0.02] px-3 py-2">
-        <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-rose-400/70" />
-          <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
-          <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/70" />
-          <span className="ml-2 font-mono text-[11px] text-slate-500">{lines.length} lines</span>
-        </div>
-        <div className="flex items-center gap-1">
+    <div className={clsx('relative overflow-hidden rounded-xl bg-console-bg', className)}>
+      <div className="flex items-center justify-between border-b border-console-border px-3 py-2">
+        <span className="font-mono text-[11px] text-console-dim">{lines.length} lines</span>
+        <div className="flex items-center gap-0.5">
           <button
             onClick={() => setAutoScroll((v) => !v)}
             title={autoScroll ? 'Pause auto-scroll' : 'Resume auto-scroll'}
-            className="rounded-md p-1.5 text-slate-500 transition hover:bg-white/10 hover:text-slate-200"
+            className={iconBtn}
           >
             {autoScroll ? <Pause size={13} /> : <Play size={13} />}
           </button>
-          <button onClick={copy} title="Copy" className="rounded-md p-1.5 text-slate-500 transition hover:bg-white/10 hover:text-slate-200">
-            {copied ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
+          <button onClick={copy} title="Copy" className={iconBtn}>
+            {copied ? <Check size={13} className="text-console-ok" /> : <Copy size={13} />}
           </button>
           {onClear && (
-            <button onClick={onClear} title="Clear" className="rounded-md p-1.5 text-slate-500 transition hover:bg-white/10 hover:text-rose-300">
+            <button onClick={onClear} title="Clear" className={iconBtn}>
               <Trash2 size={13} />
             </button>
           )}
@@ -70,7 +78,7 @@ export default function Terminal({ lines = [], onClear, emptyHint = 'Waiting for
         className={clsx('scroll-thin overflow-y-auto px-4 py-3', height)}
       >
         {lines.length === 0 ? (
-          <p className="terminal-line text-slate-600">{emptyHint}</p>
+          <p className="terminal-line text-console-dim">{emptyHint}</p>
         ) : (
           lines.map((line) => (
             <div key={line.id} className={clsx('terminal-line', TONE[line.level] || TONE.info)}>
@@ -86,7 +94,7 @@ export default function Terminal({ lines = [], onClear, emptyHint = 'Waiting for
             setAutoScroll(true);
             if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
           }}
-          className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-ink-700/90 px-3 py-1.5 text-[11px] font-medium text-slate-200 backdrop-blur transition hover:border-neon-cyan/40"
+          className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-3 py-1.5 text-[11px] font-medium text-white shadow-btn"
         >
           <ArrowDownToLine size={12} /> Jump to latest
         </button>

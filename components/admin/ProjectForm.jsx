@@ -51,7 +51,7 @@ export default function ProjectForm({
             placeholder="Smart Home Hub"
             disabled={editing}
           />
-          {editing && <p className="mt-1 text-[10px] text-slate-600">The name is the project ID and can&apos;t change here.</p>}
+          {editing && <p className="mt-1 text-[11px] text-ink-500">The name is the project ID and can&apos;t change here.</p>}
         </div>
         <div>
           <label className="label mb-1.5 block">Version</label>
@@ -147,13 +147,13 @@ export default function ProjectForm({
           {firmware.length > 0 && (
             <ul className="mt-2 space-y-2">
               {firmware.map((entry) => (
-                <li key={entry.id} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2">
-                  <FileCode2 size={14} className="shrink-0 text-neon-violet" />
+                <li key={entry.id} className="flex items-center gap-2 rounded-xl border border-hairline bg-surface px-3 py-2">
+                  <FileCode2 size={15} className="shrink-0 text-brand-600" />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs text-slate-200">{entry.file.name}</p>
-                    <p className="font-mono text-[10px] text-slate-500">{(entry.file.size / 1024).toFixed(1)} KB</p>
+                    <p className="truncate text-xs font-medium text-ink-900">{entry.file.name}</p>
+                    <p className="font-mono text-[10px] text-ink-500">{(entry.file.size / 1024).toFixed(1)} KB</p>
                   </div>
-                  <span className="font-mono text-[10px] text-slate-500">0x</span>
+                  <span className="font-mono text-[10px] text-ink-500">Hex:</span>
                   <input
                     value={Number(entry.offset).toString(16)}
                     onChange={(e) => {
@@ -162,12 +162,12 @@ export default function ProjectForm({
                         prev.map((x) => (x.id === entry.id ? { ...x, offset: Number.isFinite(parsed) ? parsed : 0 } : x))
                       );
                     }}
-                    className="field field-sm w-20 font-mono"
+                    className="field field-sm w-24 font-mono"
                   />
                   <button
                     type="button"
                     onClick={() => setFirmware((prev) => prev.filter((x) => x.id !== entry.id))}
-                    className="rounded p-1 text-slate-500 hover:text-rose-300"
+                    className="rounded p-1 text-ink-400 hover:text-red-500"
                   >
                     <X size={13} />
                   </button>
@@ -185,9 +185,9 @@ export default function ProjectForm({
           <button type="button" onClick={() => imgInput.current?.click()} className="btn-ghost btn-sm">
             <ImageIcon size={13} /> {image ? 'Change' : 'Choose image'}
           </button>
-          {image && <span className="truncate text-xs text-slate-400">{image.name}</span>}
+          {image && <span className="truncate text-xs text-ink-500">{image.name}</span>}
           {image && (
-            <button type="button" onClick={() => setImage(null)} className="text-slate-500 hover:text-rose-300">
+            <button type="button" onClick={() => setImage(null)} className="text-ink-400 hover:text-red-500">
               <X size={13} />
             </button>
           )}
@@ -212,22 +212,22 @@ export default function ProjectForm({
       </div>
 
       <div className="grid gap-2 sm:grid-cols-2">
-        <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5">
-          <input type="checkbox" checked={form.eraseAll} onChange={(e) => setForm({ ...form, eraseAll: e.target.checked })} className="h-3.5 w-3.5 accent-cyan-400" />
-          <span className="text-xs text-slate-300">Recommend a full erase</span>
+        <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-hairline bg-surface px-3.5 py-2.5">
+          <input type="checkbox" checked={form.eraseAll} onChange={(e) => setForm({ ...form, eraseAll: e.target.checked })} className="h-4 w-4 rounded accent-brand-600" />
+          <span className="text-sm text-ink-700">Recommend a full erase</span>
         </label>
-        <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5">
-          <input type="checkbox" checked={form.draft} onChange={(e) => setForm({ ...form, draft: e.target.checked })} className="h-3.5 w-3.5 accent-amber-400" />
-          <span className="text-xs text-slate-300">Save as draft</span>
-          <span className="ml-auto text-[10px] text-slate-600">hidden</span>
+        <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-hairline bg-surface px-3.5 py-2.5">
+          <input type="checkbox" checked={form.draft} onChange={(e) => setForm({ ...form, draft: e.target.checked })} className="h-4 w-4 rounded accent-amber-500" />
+          <span className="text-sm text-ink-700">Save as draft</span>
+          <span className="ml-auto rounded bg-amber-50 px-1.5 text-[10px] font-semibold text-amber-700">hidden</span>
         </label>
       </div>
 
       {busy && progress > 0 && (
-        <div className="h-1 overflow-hidden rounded-full bg-white/[0.06]">
+        <div className="h-1.5 overflow-hidden rounded-full bg-hairline">
           <div
-            className="h-full rounded-full transition-[width] duration-300"
-            style={{ width: `${progress}%`, backgroundImage: 'linear-gradient(90deg,#22d3ee,#a78bfa)' }}
+            className="h-full rounded-full bg-brand-600 transition-[width] duration-300"
+            style={{ width: `${progress}%` }}
           />
         </div>
       )}
@@ -236,7 +236,7 @@ export default function ProjectForm({
         {editing && (
           <button type="button" onClick={onCancelEdit} className="btn-ghost flex-1">Cancel</button>
         )}
-        <button type="submit" disabled={busy} className="btn-primary flex-1">
+        <button type="submit" disabled={busy} className="btn-primary flex-1 py-3">
           {busy ? <Loader2 size={14} className="animate-spin" /> : editing ? <Save size={14} /> : <CloudUpload size={14} />}
           {busy ? 'Working…' : editing ? 'Save changes' : 'Publish project'}
         </button>

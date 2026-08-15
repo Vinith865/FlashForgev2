@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { CheckCircle2, XCircle, Clock, Trash2 } from 'lucide-react';
+import { CheckCircle2, Clock, Trash2, XCircle } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
 
 const formatBytes = (b) => {
@@ -25,14 +25,14 @@ export default function HistoryPanel({ history, stats, onClear }) {
   }
 
   return (
-    <div className="space-y-3 px-5 py-4">
+    <div className="space-y-3 px-5 pb-5">
       <div className="grid grid-cols-3 gap-2">
         {[
-          { label: 'Total', value: stats.total, tone: 'text-slate-200' },
-          { label: 'Success', value: stats.success, tone: 'text-emerald-300' },
-          { label: 'Failed', value: stats.failed, tone: 'text-rose-300' },
+          { label: 'Total', value: stats.total, tone: 'text-ink-900' },
+          { label: 'Success', value: stats.success, tone: 'text-emerald-600' },
+          { label: 'Failed', value: stats.failed, tone: 'text-red-500' },
         ].map((s) => (
-          <div key={s.label} className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-center">
+          <div key={s.label} className="rounded-xl border border-hairline bg-canvas px-3 py-2.5 text-center">
             <p className={clsx('font-mono text-lg font-semibold tabular-nums', s.tone)}>{s.value}</p>
             <p className="label mt-0.5">{s.label}</p>
           </div>
@@ -41,15 +41,15 @@ export default function HistoryPanel({ history, stats, onClear }) {
 
       <ul className="scroll-thin max-h-64 space-y-1.5 overflow-y-auto pr-1">
         {history.map((h) => (
-          <li key={h.id} className="flex items-center gap-2.5 rounded-lg border border-white/[0.07] bg-white/[0.02] px-3 py-2">
+          <li key={h.id} className="flex items-center gap-2.5 rounded-lg border border-hairline bg-surface px-3 py-2">
             {h.status === 'success' ? (
-              <CheckCircle2 size={14} className="shrink-0 text-emerald-400" />
+              <CheckCircle2 size={15} className="shrink-0 text-emerald-500" />
             ) : (
-              <XCircle size={14} className="shrink-0 text-rose-400" />
+              <XCircle size={15} className="shrink-0 text-red-500" />
             )}
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-medium text-slate-200">{h.project}</p>
-              <p className="truncate font-mono text-[10px] text-slate-500">
+              <p className="truncate text-xs font-medium text-ink-900">{h.project}</p>
+              <p className="truncate font-mono text-[10px] text-ink-500">
                 {new Date(h.at).toLocaleString()} · {h.chip || '—'} · {formatBytes(h.bytes)} · {formatDuration(h.durationMs)}
               </p>
             </div>

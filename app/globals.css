@@ -3,10 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  --accent-a: #22d3ee;
-  --accent-b: #a78bfa;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
 }
 
 @layer base {
@@ -15,103 +13,123 @@
   html, body { height: 100%; }
 
   body {
-    @apply bg-ink-900 text-slate-200 antialiased;
-    background-image:
-      radial-gradient(900px 500px at 12% -10%, rgba(34, 211, 238, 0.14), transparent 60%),
-      radial-gradient(800px 500px at 95% 0%, rgba(167, 139, 250, 0.14), transparent 55%),
-      radial-gradient(700px 600px at 50% 115%, rgba(34, 211, 238, 0.08), transparent 60%);
-    background-attachment: fixed;
+    @apply bg-canvas text-ink-900 antialiased;
   }
 
-  ::selection { background: rgba(34, 211, 238, 0.28); color: #fff; }
+  ::selection { background: #dbeafe; color: #0f172a; }
 
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.12);
+    background: #cbd5e1;
     border-radius: 999px;
-    border: 2px solid transparent;
+    border: 3px solid transparent;
     background-clip: content-box;
   }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.22); background-clip: content-box; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; background-clip: content-box; }
 
   input, select, textarea, button { font: inherit; }
 
-  input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible {
-    outline: 2px solid rgba(34, 211, 238, 0.6);
+  input:focus-visible, select:focus-visible, textarea:focus-visible,
+  button:focus-visible, a:focus-visible {
+    outline: 2px solid #2563eb;
     outline-offset: 2px;
   }
 }
 
 @layer components {
   /* ── Surfaces ─────────────────────────────────────────────── */
-  .glass {
-    @apply relative rounded-2xl border border-white/10 bg-white/[0.035] backdrop-blur-xl shadow-card;
+  .card {
+    @apply rounded-2xl border border-hairline bg-surface shadow-card;
   }
-  .glass-strong {
-    @apply relative rounded-2xl border border-white/[0.12] bg-white/[0.06] backdrop-blur-2xl shadow-card;
+  .card-hover {
+    @apply transition-all duration-200 hover:border-brand-200 hover:shadow-lift;
   }
-  .glass-hover {
-    @apply transition-all duration-300 hover:border-white/20 hover:bg-white/[0.06];
-  }
-
-  /* Hairline gradient top-edge used on major panels */
-  .edge-light::before {
-    content: '';
-    @apply pointer-events-none absolute inset-x-6 -top-px h-px;
-    background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.7), rgba(167, 139, 250, 0.7), transparent);
-  }
+  /* Kept for API compatibility with the previous theme. */
+  .glass { @apply card; }
+  .glass-strong { @apply rounded-2xl border border-hairline bg-surface shadow-lift; }
+  .edge-light { @apply relative; }
 
   /* ── Text ─────────────────────────────────────────────────── */
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(100deg, #e2e8f0 10%, var(--accent-a) 45%, var(--accent-b) 80%);
+    background-image: linear-gradient(95deg, #2563eb, #3b82f6 55%, #60a5fa);
   }
   .label {
-    @apply text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500;
+    @apply text-[12px] font-medium text-ink-500;
+  }
+  .label-caps {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-400;
   }
 
   /* ── Buttons ──────────────────────────────────────────────── */
   .btn {
     @apply inline-flex select-none items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
-           transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-40;
+           transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-45;
   }
   .btn-primary {
-    @apply btn text-ink-900 shadow-glow;
-    background-image: linear-gradient(100deg, #67e8f9, #22d3ee 40%, #a78bfa);
+    @apply btn bg-brand-600 text-white shadow-btn hover:bg-brand-800 active:bg-brand-800;
   }
-  .btn-primary:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
-  .btn-primary:active:not(:disabled) { transform: translateY(0); }
-
   .btn-ghost {
-    @apply btn border border-white/10 bg-white/[0.04] text-slate-200 hover:border-white/20 hover:bg-white/[0.08];
+    @apply btn border border-hairline bg-surface text-brand-600 hover:border-brand-200 hover:bg-brand-50;
+  }
+  .btn-text {
+    @apply btn bg-transparent px-2 text-brand-600 hover:bg-brand-50;
+  }
+  .btn-pill {
+    @apply btn rounded-full bg-brand-100 px-4 py-1.5 text-xs text-brand-800 hover:bg-brand-200;
   }
   .btn-danger {
-    @apply btn border border-rose-400/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20;
+    @apply btn bg-red-500 text-white hover:bg-red-600;
   }
-  .btn-sm { @apply px-3 py-1.5 text-xs rounded-lg; }
+  .btn-danger-soft {
+    @apply btn border border-red-200 bg-red-50 text-red-700 hover:bg-red-100;
+  }
+  .btn-sm { @apply rounded-lg px-3 py-1.5 text-xs; }
 
   /* ── Form controls ────────────────────────────────────────── */
   .field {
-    @apply w-full rounded-xl border border-white/10 bg-ink-800/70 px-3.5 py-2.5 text-sm text-slate-100
-           placeholder:text-slate-600 transition-colors focus:border-neon-cyan/50;
+    @apply w-full rounded-xl border border-hairline bg-surface px-3.5 py-2.5 text-sm text-ink-900
+           placeholder:text-ink-400 transition-shadow;
   }
-  .field-sm { @apply px-3 py-1.5 text-xs rounded-lg; }
+  .field:focus {
+    @apply border-brand-500 shadow-focus outline-none;
+  }
+  .field-sm { @apply rounded-lg px-3 py-1.5 text-xs; }
 
+  /* ── Chips ────────────────────────────────────────────────── */
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1
-           text-xs font-medium text-slate-400 transition-all hover:border-white/25 hover:text-slate-100;
+    @apply inline-flex items-center gap-1.5 rounded-lg border border-hairline bg-surface px-3 py-1
+           text-xs font-medium text-ink-500 transition-all hover:border-brand-200 hover:text-brand-600;
   }
   .chip-active {
-    @apply border-neon-cyan/40 bg-neon-cyan/10 text-neon-cyan;
+    @apply border-brand-200 bg-brand-50 text-brand-600;
+  }
+  .chip-tag {
+    @apply inline-flex items-center gap-1 rounded-md bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-600;
+  }
+  /* Solid pill used for the quick-filter row */
+  .chip-solid {
+    @apply inline-flex items-center rounded-lg bg-brand-600 px-3 py-1 text-xs font-semibold text-white;
+  }
+
+  /* ── Tabs ─────────────────────────────────────────────────── */
+  .tab {
+    @apply relative -mb-px border-b-2 border-transparent px-4 py-3 text-sm font-medium text-ink-500
+           transition-colors hover:text-ink-700;
+  }
+  .tab-active {
+    @apply border-brand-600 text-brand-600;
   }
 
   /* ── Misc ─────────────────────────────────────────────────── */
-  .divider { @apply h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent; }
-
+  .divider { @apply h-px w-full bg-hairline; }
   .scroll-thin { scrollbar-width: thin; }
+  .terminal-line { @apply whitespace-pre-wrap break-words font-mono text-[12.5px] leading-[1.6]; }
 
-  .terminal-line { @apply whitespace-pre-wrap break-words font-mono text-[12.5px] leading-[1.55]; }
+  .stat-card {
+    @apply rounded-2xl border border-hairline bg-surface px-6 py-4 text-center shadow-card;
+  }
 }
 
 @layer utilities {

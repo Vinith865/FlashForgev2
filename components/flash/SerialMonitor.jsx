@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import clsx from 'clsx';
-import { Send, TerminalSquare, Radio } from 'lucide-react';
+import { Radio, Send, TerminalSquare } from 'lucide-react';
 import Terminal from '@/components/ui/Terminal';
 import { BAUD_RATES } from '@/services/serial';
 
@@ -13,9 +12,7 @@ const LINE_ENDINGS = [
   { label: 'None', value: '' },
 ];
 
-export default function SerialMonitor({
-  lines, baud, setBaud, running, onToggle, onSend, onClear, canUse,
-}) {
+export default function SerialMonitor({ lines, baud, setBaud, running, onToggle, onSend, onClear, canUse }) {
   const [draft, setDraft] = useState('');
   const [ending, setEnding] = useState('\r\n');
 
@@ -27,22 +24,13 @@ export default function SerialMonitor({
   };
 
   return (
-    <div className="space-y-3 px-5 py-4">
+    <div className="space-y-3 px-5 pb-5">
       <div className="flex flex-wrap items-center gap-2">
-        <button
-          onClick={onToggle}
-          disabled={!canUse}
-          className={clsx('btn-sm', running ? 'btn-danger' : 'btn-primary')}
-        >
+        <button onClick={onToggle} disabled={!canUse} className={running ? 'btn-danger-soft btn-sm' : 'btn-primary btn-sm'}>
           <Radio size={12} /> {running ? 'Stop monitor' : 'Start monitor'}
         </button>
 
-        <select
-          value={baud}
-          onChange={(e) => setBaud(Number(e.target.value))}
-          disabled={running}
-          className="field field-sm w-auto"
-        >
+        <select value={baud} onChange={(e) => setBaud(Number(e.target.value))} disabled={running} className="field field-sm w-auto">
           {BAUD_RATES.map((b) => <option key={b} value={b}>{b} baud</option>)}
         </select>
 
@@ -51,8 +39,8 @@ export default function SerialMonitor({
         </select>
 
         {running && (
-          <span className="ml-auto inline-flex items-center gap-1.5 text-[11px] font-medium text-neon-lime">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-neon-lime" /> live
+          <span className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" /> live
           </span>
         )}
       </div>
@@ -61,16 +49,12 @@ export default function SerialMonitor({
         lines={lines}
         onClear={onClear}
         height="h-64"
-        emptyHint={
-          canUse
-            ? 'Start the monitor to stream Serial.println() output from your board.'
-            : 'Connect a board to use the serial monitor.'
-        }
+        emptyHint={canUse ? 'Start the monitor to stream Serial.println() output from your board.' : 'Connect a board to use the serial monitor.'}
       />
 
       <form onSubmit={submit} className="flex items-center gap-2">
         <div className="relative flex-1">
-          <TerminalSquare size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
+          <TerminalSquare size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
           <input
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
@@ -80,7 +64,7 @@ export default function SerialMonitor({
           />
         </div>
         <button type="submit" disabled={!running || !draft.trim()} className="btn-ghost btn-sm">
-          <Send size={12} />
+          <Send size={13} />
         </button>
       </form>
     </div>

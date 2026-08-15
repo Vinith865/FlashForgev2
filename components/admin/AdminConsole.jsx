@@ -251,17 +251,17 @@ export default function AdminConsole() {
     <main className="mx-auto max-w-[1400px] px-4 py-8 sm:px-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-50">Admin console</h1>
-          <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+          <h1 className="text-3xl font-bold tracking-tight text-ink-900">Admin console</h1>
+          <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-500">
             <span className="inline-flex items-center gap-1.5">
               <Database size={12} /> {health?.storage || '…'}
             </span>
-            <span className={clsx('inline-flex items-center gap-1.5', health?.twoFactorEnabled ? 'text-emerald-400' : 'text-amber-400')}>
+            <span className={clsx('inline-flex items-center gap-1.5', health?.twoFactorEnabled ? 'text-emerald-600' : 'text-amber-600')}>
               {health?.twoFactorEnabled ? <ShieldCheck size={12} /> : <ShieldOff size={12} />}
               {health?.twoFactorEnabled ? '2FA active' : '2FA off'}
             </span>
             {health?.storage === 'local-filesystem' && (
-              <span className="text-amber-400">not persisted on Vercel</span>
+              <span className="text-amber-600">not persisted on Vercel</span>
             )}
           </p>
         </div>
@@ -277,7 +277,7 @@ export default function AdminConsole() {
       {notice && (
         <div className={clsx(
           'mb-5 flex items-start justify-between gap-3 rounded-xl px-4 py-3 text-xs animate-slideUp',
-          notice.type === 'error' ? 'bg-rose-500/10 text-rose-300' : 'bg-emerald-500/10 text-emerald-300'
+          notice.type === 'error' ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'
         )}>
           <span className="leading-relaxed">{notice.text}</span>
           <button onClick={() => setNotice(null)} className="shrink-0 opacity-60 hover:opacity-100"><X size={13} /></button>
@@ -305,7 +305,7 @@ export default function AdminConsole() {
 
         <div className="space-y-5 lg:sticky lg:top-6 lg:self-start">
           <Panel>
-            <div className="flex items-center gap-1 border-b border-white/[0.07] px-3 py-2">
+            <div className="flex items-center gap-1 border-b border-hairline px-5">
               {[
                 { id: 'projects', label: 'Projects', icon: Database, badge: projects.length },
                 { id: 'audit', label: 'Activity', icon: ScrollText, badge: auditData?.audit?.length },
@@ -313,17 +313,14 @@ export default function AdminConsole() {
                 <button
                   key={t.id}
                   onClick={() => setTab(t.id)}
-                  className={clsx(
-                    'inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-all',
-                    tab === t.id ? 'bg-white/[0.08] text-slate-100' : 'text-slate-500 hover:bg-white/[0.04] hover:text-slate-300'
-                  )}
+                  className={clsx('tab inline-flex items-center gap-2', tab === t.id && 'tab-active')}
                 >
                   <t.icon size={13} /> {t.label}
-                  {t.badge > 0 && <span className="rounded-full bg-white/10 px-1.5 text-[10px]">{t.badge}</span>}
+                  {t.badge > 0 && <span className="rounded-full bg-brand-50 px-1.5 text-[10px] text-brand-600">{t.badge}</span>}
                 </button>
               ))}
               {drafts > 0 && tab === 'projects' && (
-                <span className="ml-auto rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] text-amber-300">
+                <span className="ml-auto rounded-md bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
                   {drafts} draft
                 </span>
               )}
@@ -337,41 +334,41 @@ export default function AdminConsole() {
               <ul className="scroll-thin max-h-[calc(100vh-16rem)] space-y-2 overflow-y-auto px-5 py-4">
                 {projects.map((project) => (
                   <li key={project.id} className={clsx(
-                    'rounded-xl border bg-white/[0.03] p-3 transition-colors',
-                    editing === project.id ? 'border-neon-cyan/40' : 'border-white/10'
+                    'rounded-xl border bg-surface p-3 transition-colors',
+                    editing === project.id ? 'border-brand-500 bg-brand-50/50' : 'border-hairline'
                   )}>
                     <div className="flex items-center gap-3">
-                      <div className="h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-ink-700">
+                      <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-hairline bg-canvas">
                         {project.thumbnailUrl ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={project.thumbnailUrl} alt="" className="h-full w-full object-cover" />
                         ) : (
-                          <span className="grid h-full w-full place-items-center text-slate-600"><FileCode2 size={15} /></span>
+                          <span className="grid h-full w-full place-items-center text-ink-400"><FileCode2 size={16} /></span>
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="flex items-center gap-1.5 truncate text-xs font-semibold text-slate-100">
+                        <p className="flex items-center gap-1.5 truncate text-sm font-semibold text-ink-900">
                           {project.name}
                           {project.draft && (
-                            <span className="rounded border border-amber-400/30 bg-amber-400/10 px-1 text-[9px] text-amber-300">draft</span>
+                            <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-700">draft</span>
                           )}
                         </p>
-                        <p className="truncate font-mono text-[10px] text-slate-500">
+                        <p className="truncate font-mono text-[11px] text-ink-500">
                           v{project.version} · {project.firmware?.files?.length || 0} file(s)
                         </p>
                       </div>
 
                       <div className="flex shrink-0 items-center gap-0.5">
                         <button onClick={() => toggleDraft(project)} title={project.draft ? 'Publish' : 'Move to drafts'}
-                          className="rounded-lg p-1.5 text-slate-500 transition hover:bg-white/10 hover:text-slate-200">
+                          className="rounded-lg p-1.5 text-ink-400 transition hover:bg-slate-100 hover:text-ink-700">
                           {project.draft ? <EyeOff size={13} /> : <Eye size={13} />}
                         </button>
                         <button onClick={() => startEdit(project)} title="Edit"
-                          className="rounded-lg p-1.5 text-slate-500 transition hover:bg-white/10 hover:text-neon-cyan">
+                          className="rounded-lg p-1.5 text-ink-400 transition hover:bg-brand-50 hover:text-brand-600">
                           <Pencil size={13} />
                         </button>
                         <button onClick={() => remove(project)} title="Delete"
-                          className="rounded-lg p-1.5 text-slate-500 transition hover:bg-rose-500/10 hover:text-rose-300">
+                          className="rounded-lg p-1.5 text-ink-400 transition hover:bg-red-50 hover:text-red-500">
                           <Trash2 size={13} />
                         </button>
                       </div>
@@ -379,13 +376,13 @@ export default function AdminConsole() {
 
                     <button
                       onClick={() => setExpanded(expanded === project.id ? null : project.id)}
-                      className="mt-2 w-full rounded-lg border border-white/[0.07] py-1 text-[10px] text-slate-500 transition hover:border-white/20 hover:text-slate-300"
+                      className="mt-2 w-full rounded-lg border border-hairline py-1.5 text-[11px] font-medium text-ink-500 transition hover:border-brand-200 hover:text-brand-600"
                     >
                       {expanded === project.id ? 'Hide files' : 'Manage files'}
                     </button>
 
                     {expanded === project.id && (
-                      <div className="mt-2 border-t border-white/[0.07] pt-3">
+                      <div className="mt-3 border-t border-hairline pt-3">
                         <FileManager
                           project={project}
                           busy={busy}

@@ -8,52 +8,63 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       colors: {
-        ink: {
-          900: '#05060A',
-          800: '#0A0C12',
-          700: '#101320',
-          600: '#171B2B',
-          500: '#1F2438',
+        // Page + surface layers
+        canvas: '#F5F8FD',
+        surface: '#FFFFFF',
+        hairline: '#E3E9F2',
+        // Blue ramp
+        brand: {
+          50: '#EFF6FF',
+          100: '#DBEAFE',
+          200: '#BFDBFE',
+          400: '#60A5FA',
+          500: '#3B82F6',
+          600: '#2563EB',
+          800: '#1E40AF',
         },
-        neon: {
-          cyan: '#22D3EE',
-          violet: '#A78BFA',
-          lime: '#A3E635',
-          amber: '#FBBF24',
-          rose: '#FB7185',
+        // Text
+        ink: {
+          900: '#0F172A',
+          700: '#334155',
+          500: '#5B6675',
+          400: '#94A3B8',
+        },
+        // The console stays dark on purpose — it is the one high-contrast
+        // block in the interface, which is what makes log output readable.
+        console: {
+          bg: '#0B1220',
+          border: '#1E293B',
+          text: '#CBD5E1',
+          dim: '#64748B',
+          ok: '#4ADE80',
+          warn: '#FBBF24',
+          err: '#F87171',
+          info: '#7DD3FC',
         },
       },
       boxShadow: {
-        glow: '0 0 0 1px rgba(255,255,255,0.06), 0 20px 60px -20px rgba(34,211,238,0.35)',
-        'glow-violet': '0 0 0 1px rgba(255,255,255,0.06), 0 20px 60px -20px rgba(167,139,250,0.4)',
-        card: '0 1px 0 0 rgba(255,255,255,0.05) inset, 0 20px 50px -25px rgba(0,0,0,0.9)',
-      },
-      backgroundImage: {
-        'grid-fade':
-          'linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px)',
+        card: '0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.04)',
+        lift: '0 2px 4px rgba(15, 23, 42, 0.05), 0 12px 28px rgba(15, 23, 42, 0.08)',
+        focus: '0 0 0 3px rgba(37, 99, 235, 0.15)',
+        btn: '0 1px 2px rgba(37, 99, 235, 0.24)',
       },
       keyframes: {
-        shimmer: { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(200%)' } },
-        floaty: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
-        pulseGlow: {
-          '0%,100%': { opacity: '0.45' },
-          '50%': { opacity: '1' },
-        },
-        slideUp: { from: { opacity: '0', transform: 'translateY(12px)' }, to: { opacity: '1', transform: 'none' } },
+        shimmer: { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(220%)' } },
+        floaty: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-12px)' } },
+        pulseSoft: { '0%,100%': { opacity: '0.5' }, '50%': { opacity: '1' } },
+        slideUp: { from: { opacity: '0', transform: 'translateY(10px)' }, to: { opacity: '1', transform: 'none' } },
         fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
-        spinSlow: { to: { transform: 'rotate(360deg)' } },
       },
       animation: {
         shimmer: 'shimmer 2.2s infinite',
-        floaty: 'floaty 7s ease-in-out infinite',
-        pulseGlow: 'pulseGlow 2.4s ease-in-out infinite',
-        slideUp: 'slideUp 0.45s cubic-bezier(0.22,1,0.36,1) both',
-        fadeIn: 'fadeIn 0.5s ease both',
-        spinSlow: 'spinSlow 9s linear infinite',
+        floaty: 'floaty 9s ease-in-out infinite',
+        pulseSoft: 'pulseSoft 2.4s ease-in-out infinite',
+        slideUp: 'slideUp 0.4s cubic-bezier(0.22,1,0.36,1) both',
+        fadeIn: 'fadeIn 0.4s ease both',
       },
     },
   },

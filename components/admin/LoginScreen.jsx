@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
-import { ArrowLeft, KeyRound, Loader2, ShieldCheck, Smartphone } from 'lucide-react';
-import Panel from '@/components/ui/Panel';
+import { ArrowLeft, KeyRound, Loader2, ShieldCheck } from 'lucide-react';
 
 export default function LoginScreen({ onSubmit, config, busy, notice }) {
   const [step, setStep] = useState('password');
@@ -26,129 +25,111 @@ export default function LoginScreen({ onSubmit, config, busy, notice }) {
 
   return (
     <main className="grid min-h-screen place-items-center px-4">
-      <Panel className="w-full max-w-sm animate-slideUp p-7">
-        <div className="mb-6 text-center">
-          <span className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-2xl border border-neon-violet/25 bg-neon-violet/10">
-            {step === 'totp' ? (
-              <Smartphone size={22} className="text-neon-violet" />
-            ) : (
-              <ShieldCheck size={22} className="text-neon-violet" />
-            )}
-          </span>
-          <h1 className="text-lg font-semibold text-slate-100">
-            {step === 'totp' ? 'Two-factor code' : 'Admin console'}
-          </h1>
-          <p className="mt-1 text-xs leading-relaxed text-slate-500">
-            {step === 'totp'
-              ? 'Enter the 6-digit code from Microsoft Authenticator.'
-              : 'Sign in to publish and manage firmware.'}
-          </p>
-        </div>
+      <div className="w-full max-w-md">
+        <div className="animate-slideUp rounded-2xl bg-surface p-9 shadow-lift">
+          <div className="mb-7 text-center">
+            <span className="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-brand-500 text-white shadow-btn">
+              <ShieldCheck size={30} strokeWidth={2.1} />
+            </span>
+            <h1 className="text-3xl font-bold tracking-tight text-ink-900">Sign in</h1>
+            <p className="mt-2 text-sm text-ink-500">
+              {step === 'totp'
+                ? 'Enter the 6-digit code from your authenticator app.'
+                : 'Sign in to publish and manage firmware.'}
+            </p>
+          </div>
 
-        <form onSubmit={submit} className="space-y-3">
-          {step === 'password' ? (
-            <>
-              <div>
-                <label className="label mb-1.5 block">Username</label>
-                <input
-                  value={form.username}
-                  onChange={(e) => setForm({ ...form, username: e.target.value })}
-                  className="field"
-                  autoComplete="username"
-                />
-              </div>
-              <div>
-                <label className="label mb-1.5 block">Password</label>
-                <input
-                  type="password"
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  className="field"
-                  autoComplete="current-password"
-                />
-              </div>
-            </>
-          ) : (
-            <div>
-              <label className="label mb-1.5 block">Authenticator code</label>
+          <form onSubmit={submit} className="space-y-4">
+            {step === 'password' ? (
+              <>
+                <div>
+                  <label className="label mb-1.5 block">Username</label>
+                  <input
+                    value={form.username}
+                    onChange={(e) => setForm({ ...form, username: e.target.value })}
+                    className="field"
+                    autoComplete="username"
+                  />
+                </div>
+                <div>
+                  <label className="label mb-1.5 block">Password</label>
+                  <input
+                    type="password"
+                    value={form.password}
+                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                    className="field"
+                    autoComplete="current-password"
+                  />
+                </div>
+              </>
+            ) : (
               <input
                 ref={codeRef}
                 value={form.totp}
-                onChange={(e) =>
-                  setForm({ ...form, totp: e.target.value.replace(/\D/g, '').slice(0, 6) })
-                }
-                className="field text-center font-mono text-2xl tracking-[0.4em]"
+                onChange={(e) => setForm({ ...form, totp: e.target.value.replace(/\D/g, '').slice(0, 6) })}
+                className="w-full rounded-xl border-2 border-brand-500 bg-surface px-4 py-4 text-center font-mono text-3xl tracking-[0.5em] text-ink-900 shadow-focus outline-none placeholder:text-ink-400 placeholder:tracking-[0.5em]"
                 placeholder="000000"
                 inputMode="numeric"
                 autoComplete="one-time-code"
                 maxLength={6}
               />
-              <p className="mt-2 text-center text-[11px] text-slate-600">
-                Codes refresh every 30 seconds.
-              </p>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={busy || (step === 'totp' && form.totp.length !== 6)}
-            className="btn-primary w-full"
-          >
-            {busy ? <Loader2 size={14} className="animate-spin" /> : <KeyRound size={14} />}
-            {step === 'totp' ? 'Verify' : 'Sign in'}
-          </button>
-
-          {step === 'totp' && (
-            <button
-              type="button"
-              onClick={() => {
-                setStep('password');
-                setForm({ ...form, totp: '' });
-              }}
-              className="w-full text-center text-xs text-slate-500 hover:text-slate-300"
-            >
-              Use a different account
-            </button>
-          )}
-        </form>
-
-        {notice && (
-          <p
-            className={clsx(
-              'mt-4 rounded-xl px-3 py-2 text-xs leading-relaxed',
-              notice.type === 'error'
-                ? 'bg-rose-500/10 text-rose-300'
-                : 'bg-emerald-500/10 text-emerald-300'
             )}
-          >
-            {notice.text}
-          </p>
-        )}
 
-        {config && !config.adminConfigured && (
-          <p className="mt-4 rounded-xl bg-amber-500/10 px-3 py-2 text-[11px] leading-relaxed text-amber-300">
-            No admin password is configured. Run{' '}
-            <span className="font-mono">node scripts/hash-password.mjs</span> and set{' '}
-            <span className="font-mono">ADMIN_PASSWORD_HASH</span> plus{' '}
-            <span className="font-mono">ADMIN_TOKEN_SECRET</span>.
-          </p>
-        )}
+            <button
+              type="submit"
+              disabled={busy || (step === 'totp' && form.totp.length !== 6)}
+              className="btn-primary w-full py-3 text-base"
+            >
+              {busy ? <Loader2 size={16} className="animate-spin" /> : <KeyRound size={16} />}
+              {step === 'totp' ? 'Verify code' : 'Sign in'}
+            </button>
 
-        {config?.adminConfigured && !config.twoFactorEnabled && (
-          <p className="mt-4 rounded-xl bg-white/[0.04] px-3 py-2 text-[11px] leading-relaxed text-slate-500">
-            Two-factor is off. Run{' '}
-            <span className="font-mono text-slate-400">node scripts/setup-2fa.mjs</span> to enable
-            it.
-          </p>
-        )}
+            {step === 'totp' && (
+              <button
+                type="button"
+                onClick={() => { setStep('password'); setForm({ ...form, totp: '' }); }}
+                className="w-full text-center text-sm font-semibold text-ink-700 hover:text-brand-600"
+              >
+                Use a different sign-in method
+              </button>
+            )}
+          </form>
+
+          {notice && (
+            <p
+              className={clsx(
+                'mt-5 rounded-xl px-3.5 py-2.5 text-xs leading-relaxed',
+                notice.type === 'error' ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'
+              )}
+            >
+              {notice.text}
+            </p>
+          )}
+
+          {config && !config.adminConfigured && (
+            <p className="mt-5 rounded-xl bg-amber-50 px-3.5 py-2.5 text-[11px] leading-relaxed text-amber-800">
+              No admin password is configured. Run{' '}
+              <span className="font-mono">node scripts/hash-password.mjs</span> and set{' '}
+              <span className="font-mono">ADMIN_PASSWORD_HASH</span> plus{' '}
+              <span className="font-mono">ADMIN_TOKEN_SECRET</span>.
+            </p>
+          )}
+
+          {config?.adminConfigured && !config.twoFactorEnabled && (
+            <p className="mt-5 rounded-xl bg-canvas px-3.5 py-2.5 text-[11px] leading-relaxed text-ink-500">
+              Two-factor is off. Run{' '}
+              <span className="font-mono text-ink-700">node scripts/setup-2fa.mjs</span> to enable it.
+            </p>
+          )}
+        </div>
 
         <Link
           href="/"
-          className="mt-5 inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300"
+          className="mt-5 inline-flex items-center gap-1.5 text-sm text-ink-500 hover:text-brand-600"
         >
-          <ArrowLeft size={12} /> Back to flasher
+          <ArrowLeft size={13} /> Back to flasher
         </Link>
-      </Panel>
+      </div>
     </main>
   );
 }

@@ -14,7 +14,7 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: '#05060A',
+  themeColor: '#F5F8FD',
   width: 'device-width',
   initialScale: 1,
 };
@@ -32,7 +32,7 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         />
       </head>
-      <body className="min-h-screen">
+      <body className="min-h-screen bg-canvas">
         <Background />
         {children}
       </body>
