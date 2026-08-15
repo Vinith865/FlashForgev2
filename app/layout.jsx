@@ -17,10 +17,7 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#F5F8FD' },
-    { media: '(prefers-color-scheme: dark)', color: '#0B1220' },
-  ],
+  themeColor: '#F5F8FD',
   width: 'device-width',
   initialScale: 1,
 };
@@ -39,11 +36,11 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="min-h-screen bg-canvas">
-        {/* Applies the saved theme before first paint so there is no flash
-            of the wrong background on load. */}
+        {/* Light unless the visitor previously chose dark. Applied before
+            first paint so there is no flash of the wrong background. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var m=localStorage.getItem('te-flasher:theme')||'system';var d=m==='dark'||(m==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`,
+            __html: `(function(){try{document.documentElement.classList.toggle('dark',localStorage.getItem('te-flasher:theme')==='dark');}catch(e){}})();`,
           }}
         />
         <Background />
