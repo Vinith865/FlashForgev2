@@ -70,8 +70,8 @@ export default function FlasherApp() {
 
       <main className="mx-auto max-w-[1600px] px-4 pb-16 pt-8 sm:px-6">
         {/* ── Hero ─────────────────────────────────────────────── */}
-        <section className="mb-6 flex flex-wrap items-start justify-between gap-8 animate-slideUp">
-          <div className="max-w-2xl flex-1">
+        <section className="mb-6 flex flex-wrap items-center justify-between gap-8 animate-slideUp">
+          <div className="min-w-[19rem] max-w-2xl flex-1">
             <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-[11px] font-semibold text-brand-700">
               <span className="h-1.5 w-1.5 animate-pulseSoft rounded-full bg-brand-600" />
               Runs entirely in your browser
@@ -98,7 +98,10 @@ export default function FlasherApp() {
             </ul>
           </div>
 
-          <Showcase items={showcase} />
+          {/* Sits centred in whatever space the headline leaves. */}
+          <div className="flex flex-1 justify-center lg:min-w-[26rem]">
+            <Showcase items={showcase} />
+          </div>
         </section>
 
         {/* ── Guided steps ─────────────────────────────────────── */}
