@@ -20,7 +20,7 @@ export default function FilterBar({
   count, total,
 }) {
   return (
-    <div className="space-y-3 border-b border-hairline px-5 pb-4">
+    <div className="space-y-3 border-b border-hairline p-5">
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-[220px] flex-1">
           <Search size={15} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
