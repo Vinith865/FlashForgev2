@@ -64,6 +64,11 @@ export async function fetchCompatibility(id, chip) {
   return data;
 }
 
+export async function fetchShowcase() {
+  const { data } = await request('/api/showcase');
+  return data || [];
+}
+
 /* ── Admin ──────────────────────────────────────────────────────────── */
 
 export async function adminLoginConfig() {
@@ -149,6 +154,39 @@ export async function adminSession(token) {
 
 export async function adminRevokeSessions(token) {
   const { data } = await request('/api/admin/session', {
+    method: 'DELETE',
+    headers: auth(token),
+  });
+  return data;
+}
+
+/* ── Showcase ───────────────────────────────────────────────────────── */
+
+export async function adminListShowcase(token) {
+  const { data } = await request('/api/admin/showcase', { headers: auth(token) });
+  return data || [];
+}
+
+export async function adminCreateShowcase(token, item) {
+  const { data } = await request('/api/admin/showcase', {
+    method: 'POST',
+    headers: auth(token),
+    body: JSON.stringify(item),
+  });
+  return data;
+}
+
+export async function adminUpdateShowcase(token, id, patch) {
+  const { data } = await request(`/api/admin/showcase/${id}`, {
+    method: 'PATCH',
+    headers: auth(token),
+    body: JSON.stringify(patch),
+  });
+  return data;
+}
+
+export async function adminDeleteShowcase(token, id) {
+  const { data } = await request(`/api/admin/showcase/${id}`, {
     method: 'DELETE',
     headers: auth(token),
   });

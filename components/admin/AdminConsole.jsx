@@ -5,7 +5,7 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import {
   ArrowLeft, CloudUpload, Database, Eye, EyeOff, FileCode2, LogOut,
-  Pencil, ScrollText, ShieldCheck, ShieldOff, Trash2, X,
+  Pencil, Play, ScrollText, ShieldCheck, ShieldOff, Trash2, X,
 } from 'lucide-react';
 
 import Panel, { PanelHeader } from '@/components/ui/Panel';
@@ -16,6 +16,7 @@ import FileManager from './FileManager';
 import AuditPanel from './AuditPanel';
 import { BLOB_TOKEN_HINT, SERVER_UPLOAD_LIMIT, buildUploadPayload, slugOf, totalBytes } from './upload';
 import ThemeToggle from '@/components/layout/ThemeToggle';
+import ShowcaseManager from './ShowcaseManager';
 import {
   adminAddFiles, adminAudit, adminDeleteFile, adminDeleteProject, adminListProjects,
   adminLogin, adminLoginConfig, adminRevokeSessions, adminSaveProject,
@@ -38,6 +39,8 @@ export default function AdminConsole() {
   const [expanded, setExpanded] = useState(null);
 
   const [tab, setTab] = useState('projects');
+  // Top-level section: firmware library vs the home-page carousel.
+  const [section, setSection] = useState('firmware');
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState(0);
   const [notice, setNotice] = useState(null);
@@ -292,7 +295,27 @@ export default function AdminConsole() {
         </div>
       </div>
 
-      {health?.storage === 'vercel-blob' && health?.blob?.clientUploads === false && (
+      <div className="mb-5 inline-flex items-center gap-1 rounded-xl border border-hairline bg-canvas p-1">
+        {[
+          { id: 'firmware', label: 'Firmware', icon: CloudUpload },
+          { id: 'showcase', label: 'Showcase', icon: Play },
+        ].map((sec) => (
+          <button
+            key={sec.id}
+            onClick={() => setSection(sec.id)}
+            className={clsx(
+              'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200',
+              section === sec.id
+                ? 'bg-surface text-brand-600 shadow-card'
+                : 'text-ink-500 hover:text-ink-900'
+            )}
+          >
+            <sec.icon size={14} /> {sec.label}
+          </button>
+        ))}
+      </div>
+
+      {health?.storage === 'vercel-blob' && health?.blob?.clientUploads === false && section === 'firmware' && (
         <div className="mb-5 rounded-xl tint-warn px-4 py-3 text-xs leading-relaxed text-warn-fg">
           <strong className="font-semibold">Uploads limited to 3 MB.</strong> Your Blob store is
           connected over OIDC, so files are routed through the server. Add{' '}
@@ -311,6 +334,14 @@ export default function AdminConsole() {
         </div>
       )}
 
+      {section === 'showcase' ? (
+        <ShowcaseManager
+          token={token}
+          onError={(text) => flash('error', text)}
+          onSuccess={(text) => flash('success', text)}
+          onUnauthorised={() => signOut('Your session ended. Sign in again.')}
+        />
+      ) : (
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_400px]">
         <Panel>
           <PanelHeader
@@ -426,6 +457,7 @@ export default function AdminConsole() {
           </Panel>
         </div>
       </div>
+      )}
     </main>
   );
 }

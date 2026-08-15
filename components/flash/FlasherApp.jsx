@@ -21,6 +21,8 @@ import DeviceCard from './DeviceCard';
 import SerialMonitor from './SerialMonitor';
 import HistoryPanel from './HistoryPanel';
 
+import Showcase from './Showcase';
+import { useShowcase } from '@/hooks/useShowcase';
 import { useFlasher, STATUS } from '@/hooks/useFlasher';
 import { useProjects } from '@/hooks/useProjects';
 import { useFavorites } from '@/hooks/useFavorites';
@@ -35,6 +37,7 @@ export default function FlasherApp() {
   const f = useFlasher();
   const p = useProjects();
   const { toggle: toggleFavorite, isFavorite, favorites } = useFavorites();
+  const showcase = useShowcase();
 
   const [tab, setTab] = useState('console');
   const [detail, setDetail] = useState(null);
@@ -67,8 +70,8 @@ export default function FlasherApp() {
 
       <main className="mx-auto max-w-[1600px] px-4 pb-16 pt-8 sm:px-6">
         {/* ── Hero ─────────────────────────────────────────────── */}
-        <section className="mb-6 animate-slideUp">
-          <div className="max-w-3xl">
+        <section className="mb-6 flex flex-wrap items-start justify-between gap-8 animate-slideUp">
+          <div className="max-w-2xl flex-1">
             <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-[11px] font-semibold text-brand-700">
               <span className="h-1.5 w-1.5 animate-pulseSoft rounded-full bg-brand-600" />
               Runs entirely in your browser
@@ -94,6 +97,8 @@ export default function FlasherApp() {
               ))}
             </ul>
           </div>
+
+          <Showcase items={showcase} />
         </section>
 
         {/* ── Guided steps ─────────────────────────────────────── */}
