@@ -25,7 +25,7 @@ export default function Showcase({ items = [] }) {
 
   return (
     <div
-      className="w-full max-w-[34rem]"
+      className="w-full max-w-[420px]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -54,13 +54,13 @@ export default function Showcase({ items = [] }) {
 
             {/* Play affordance */}
             <span className="pointer-events-none absolute inset-0 grid place-items-center">
-              <span className="grid h-14 w-14 place-items-center rounded-full bg-black/55 text-white backdrop-blur-sm transition-transform duration-300 ease-smooth group-hover:scale-110">
-                <Play size={22} fill="currentColor" />
+              <span className="grid h-12 w-12 place-items-center rounded-full bg-black/55 text-white backdrop-blur-sm transition-transform duration-300 ease-smooth group-hover:scale-110">
+                <Play size={20} fill="currentColor" />
               </span>
             </span>
 
-            <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-4 pb-3 pt-10">
-              <span className="line-clamp-2 text-[13px] font-semibold leading-snug text-white">
+            <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent px-3.5 pb-2.5 pt-8">
+              <span className="line-clamp-2 text-xs font-semibold leading-snug text-white">
                 {active.title}
               </span>
             </span>

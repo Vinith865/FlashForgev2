@@ -99,7 +99,7 @@ export default function FlasherApp() {
           </div>
 
           {/* Sits centred in whatever space the headline leaves. */}
-          <div className="flex flex-1 justify-center lg:min-w-[26rem]">
+          <div className="flex flex-1 justify-center lg:min-w-[24rem]">
             <Showcase items={showcase} />
           </div>
         </section>
