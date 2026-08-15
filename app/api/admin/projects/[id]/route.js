@@ -2,6 +2,7 @@ import { requireAdmin } from '@/lib/auth';
 import { audit, clientIp } from '@/lib/security';
 import { readProjects, writeProjects, deleteProjectFiles } from '@/lib/store';
 import { ok, fail } from '@/lib/projects';
+import { withStorageErrors } from '@/lib/handler';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -22,7 +23,7 @@ export async function GET(request, { params }) {
 }
 
 /** Partial edit — metadata, boards, tags, draft state, flash parameters. */
-export async function PATCH(request, { params }) {
+async function handlePATCH(request, { params }) {
   const { denied, claims } = await requireAdmin(request);
   if (denied) return denied;
 
@@ -96,7 +97,7 @@ export async function PATCH(request, { params }) {
   return ok(next);
 }
 
-export async function DELETE(request, { params }) {
+async function handleDELETE(request, { params }) {
   const { denied, claims } = await requireAdmin(request);
   if (denied) return denied;
 
@@ -115,3 +116,6 @@ export async function DELETE(request, { params }) {
 
   return ok({ id: params.id, deleted: true });
 }
+
+export const PATCH = withStorageErrors(handlePATCH);
+export const DELETE = withStorageErrors(handleDELETE);

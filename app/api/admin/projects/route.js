@@ -2,6 +2,7 @@ import { requireAdmin } from '@/lib/auth';
 import { audit, clientIp } from '@/lib/security';
 import { readProjects, writeProjects, saveFile, usingBlob } from '@/lib/store';
 import { slugify, ok, fail } from '@/lib/projects';
+import { withStorageErrors } from '@/lib/handler';
 import { collectFirmwareFiles, decodeBase64, extOf, IMAGE_EXT } from '@/lib/firmware';
 
 export const runtime = 'nodejs';
@@ -18,7 +19,7 @@ export async function GET(request) {
 
 /* ── Create / replace ───────────────────────────────────────────────── */
 
-export async function POST(request) {
+async function handlePOST(request) {
   const { denied, claims } = await requireAdmin(request);
   if (denied) return denied;
 
@@ -100,3 +101,5 @@ export async function POST(request) {
 
   return Response.json({ success: true, data: record }, { status: existing ? 200 : 201 });
 }
+
+export const POST = withStorageErrors(handlePOST);

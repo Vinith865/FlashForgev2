@@ -4,7 +4,7 @@ import {
   audit, clearFailures, clientIp, consumeTotpStep, lockoutState,
   recordFailure, LOCKOUT_THRESHOLD,
 } from '@/lib/security';
-import { readSecurityDoc } from '@/lib/store';
+import { readSecurityDoc, StorageError } from '@/lib/store';
 import { ok, fail } from '@/lib/projects';
 
 export const runtime = 'nodejs';
@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
 
 const minutes = (ms) => Math.max(1, Math.ceil(ms / 60000));
 
-export async function POST(request) {
+async function handleLogin(request) {
   if (!isAdminConfigured()) {
     return fail(
       'No admin password configured. Set ADMIN_PASSWORD_HASH in your environment variables.',
@@ -101,6 +101,16 @@ export async function POST(request) {
     username,
     twoFactor: isTotpEnabled(),
   });
+}
+
+export async function POST(request) {
+  try {
+    return await handleLogin(request);
+  } catch (error) {
+    if (error instanceof StorageError) return fail(error.message, 503);
+    console.error('admin login failed:', error);
+    return fail('Sign-in failed because of a server error. Check the deployment logs.', 500);
+  }
 }
 
 export async function GET() {

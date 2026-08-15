@@ -5,14 +5,19 @@
  */
 import { handleUpload } from '@vercel/blob/client';
 import { verifyAdminToken } from '@/lib/auth';
+import { canClientUpload } from '@/lib/store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request) {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  if (!canClientUpload()) {
     return Response.json(
-      { success: false, error: 'Blob storage is not configured on this deployment.' },
+      {
+        success: false,
+        error:
+          'Direct browser uploads need BLOB_READ_WRITE_TOKEN. Open your Blob store in Vercel, copy the read/write token, and add it as an environment variable.',
+      },
       { status: 503 }
     );
   }

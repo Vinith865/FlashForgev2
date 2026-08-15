@@ -6,6 +6,7 @@ import { requireAdmin } from '@/lib/auth';
 import { audit, clientIp } from '@/lib/security';
 import { readProjects, writeProjects, deleteFileByUrl } from '@/lib/store';
 import { normaliseOffset, ok, fail } from '@/lib/projects';
+import { withStorageErrors } from '@/lib/handler';
 import { collectFirmwareFiles } from '@/lib/firmware';
 
 export const runtime = 'nodejs';
@@ -25,7 +26,7 @@ async function persist(projects, id, project, { actor, ip, action, detail }) {
 }
 
 /** Add one or more firmware parts. */
-export async function POST(request, { params }) {
+async function handlePOST(request, { params }) {
   const { denied, claims } = await requireAdmin(request);
   if (denied) return denied;
 
@@ -66,7 +67,7 @@ export async function POST(request, { params }) {
 }
 
 /** Change the flash offset of one part. */
-export async function PATCH(request, { params }) {
+async function handlePATCH(request, { params }) {
   const { denied, claims } = await requireAdmin(request);
   if (denied) return denied;
 
@@ -106,7 +107,7 @@ export async function PATCH(request, { params }) {
 }
 
 /** Remove a single part. */
-export async function DELETE(request, { params }) {
+async function handleDELETE(request, { params }) {
   const { denied, claims } = await requireAdmin(request);
   if (denied) return denied;
 
@@ -135,3 +136,7 @@ export async function DELETE(request, { params }) {
 
   return ok(project);
 }
+
+export const POST = withStorageErrors(handlePOST);
+export const PATCH = withStorageErrors(handlePATCH);
+export const DELETE = withStorageErrors(handleDELETE);
