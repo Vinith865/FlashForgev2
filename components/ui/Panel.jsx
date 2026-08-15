@@ -13,12 +13,15 @@ export function PanelHeader({ icon: Icon, title, subtitle, actions }) {
     <div className="flex items-center justify-between gap-4 px-5 py-4">
       <div className="flex min-w-0 items-center gap-3">
         {Icon && (
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-600 text-white shadow-btn">
+          <span
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-white shadow-btn"
+            style={{ backgroundImage: 'linear-gradient(180deg,#3b82f6,#2563eb)' }}
+          >
             <Icon size={19} strokeWidth={2.1} />
           </span>
         )}
         <div className="min-w-0">
-          <h2 className="truncate text-base font-semibold tracking-tight text-ink-900">{title}</h2>
+          <h2 className="truncate text-[15px] font-semibold tracking-tight text-ink-900">{title}</h2>
           {subtitle && <p className="truncate text-sm text-ink-500">{subtitle}</p>}
         </div>
       </div>

@@ -20,7 +20,7 @@ export default function FileManager({ project, onAdd, onSetOffset, onRemove, bus
             parseInt(drafts[file.filename] || '0', 16) !== Number(file.offset);
 
           return (
-            <li key={file.filename} className="flex items-center gap-2 rounded-xl border border-hairline bg-surface px-3 py-2">
+            <li key={file.filename} className="row-hover flex items-center gap-2 rounded-xl border border-hairline bg-surface px-3 py-2">
               <FileCode2 size={15} className="shrink-0 text-brand-600" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-xs font-medium text-ink-900">{file.filename}</p>

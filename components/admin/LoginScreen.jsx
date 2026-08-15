@@ -26,12 +26,15 @@ export default function LoginScreen({ onSubmit, config, busy, notice }) {
   return (
     <main className="grid min-h-screen place-items-center px-4">
       <div className="w-full max-w-md">
-        <div className="animate-slideUp rounded-2xl bg-surface p-9 shadow-lift">
+        <div className="card animate-slideUp p-9 shadow-pop">
           <div className="mb-7 text-center">
-            <span className="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-brand-500 text-white shadow-btn">
+            <span
+              className="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-2xl text-white shadow-btn"
+              style={{ backgroundImage: 'linear-gradient(180deg,#60a5fa,#3b82f6)' }}
+            >
               <ShieldCheck size={30} strokeWidth={2.1} />
             </span>
-            <h1 className="text-3xl font-bold tracking-tight text-ink-900">Sign in</h1>
+            <h1 className="text-[32px] font-bold leading-tight tracking-tightest text-ink-900">Sign in</h1>
             <p className="mt-2 text-sm text-ink-500">
               {step === 'totp'
                 ? 'Enter the 6-digit code from your authenticator app.'
@@ -78,7 +81,7 @@ export default function LoginScreen({ onSubmit, config, busy, notice }) {
             <button
               type="submit"
               disabled={busy || (step === 'totp' && form.totp.length !== 6)}
-              className="btn-primary w-full py-3 text-base"
+              className="btn-primary btn-lg w-full"
             >
               {busy ? <Loader2 size={16} className="animate-spin" /> : <KeyRound size={16} />}
               {step === 'totp' ? 'Verify code' : 'Sign in'}

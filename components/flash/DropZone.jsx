@@ -16,8 +16,10 @@ export default function DropZone({ files, onAdd, onUpdateOffset, onRemove, mode 
         onDrop={(e) => { e.preventDefault(); setDragging(false); onAdd(e.dataTransfer.files); }}
         onClick={() => inputRef.current?.click()}
         className={clsx(
-          'cursor-pointer rounded-xl border-2 border-dashed px-4 py-8 text-center transition-all',
-          dragging ? 'border-brand-500 bg-brand-50' : 'border-brand-200 bg-brand-50/40 hover:border-brand-400 hover:bg-brand-50'
+          'cursor-pointer rounded-xl border-2 border-dashed px-4 py-8 text-center transition-all duration-200 ease-smooth',
+          dragging
+            ? 'scale-[1.01] border-brand-500 bg-brand-50 shadow-inset'
+            : 'border-brand-200 bg-brand-50/40 hover:border-brand-400 hover:bg-brand-50'
         )}
       >
         <input
@@ -28,7 +30,7 @@ export default function DropZone({ files, onAdd, onUpdateOffset, onRemove, mode 
           className="hidden"
           onChange={(e) => { onAdd(e.target.files); e.target.value = ''; }}
         />
-        <UploadCloud size={30} className="mx-auto mb-2 text-brand-500" />
+        <UploadCloud size={30} className={clsx('mx-auto mb-2 transition-transform duration-300 ease-smooth', dragging ? 'scale-110 text-brand-600' : 'text-brand-500')} />
         <p className="text-sm font-medium text-ink-700">Drag &amp; drop firmware file here</p>
         <p className="mt-0.5 text-xs font-medium text-brand-600">or click to browse</p>
         <p className="mt-1.5 text-[11px] text-ink-500">

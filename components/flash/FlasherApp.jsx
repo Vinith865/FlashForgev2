@@ -74,10 +74,10 @@ export default function FlasherApp() {
         {/* ── Hero ─────────────────────────────────────────────── */}
         <section className="mb-7 flex flex-wrap items-start justify-between gap-6 animate-slideUp">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight text-ink-900 sm:text-[2.75rem]">
+            <h1 className="text-4xl font-bold text-ink-900 sm:text-[2.9rem] sm:leading-[1.08]">
               Flash. Verify. Deploy.
             </h1>
-            <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-ink-500">
+            <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-ink-500">
               Flash firmware to ESP32 and Arduino boards straight from your browser — no drivers,
               no IDE, no install.
             </p>
@@ -85,9 +85,9 @@ export default function FlasherApp() {
 
           <div className="flex gap-3">
             {stats.map((s) => (
-              <div key={s.label} className="stat-card min-w-[7.5rem]">
-                <p className="text-3xl font-bold tabular-nums text-ink-900">{s.value}</p>
-                <p className="mt-0.5 text-xs text-ink-500">{s.label}</p>
+              <div key={s.label} className="stat-card min-w-[8rem]">
+                <p className="text-[28px] font-bold leading-none tracking-tight text-ink-900 nums">{s.value}</p>
+                <p className="mt-1.5 text-xs font-medium text-ink-500">{s.label}</p>
               </div>
             ))}
           </div>
@@ -126,7 +126,7 @@ export default function FlasherApp() {
               {p.loading ? (
                 <div className="grid gap-3 p-5 sm:grid-cols-2 lg:grid-cols-3">
                   {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="h-[104px] animate-pulse rounded-2xl bg-canvas" />
+                    <div key={i} className="skeleton h-[104px]" />
                   ))}
                 </div>
               ) : p.error ? (

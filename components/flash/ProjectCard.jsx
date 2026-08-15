@@ -10,14 +10,14 @@ export default function ProjectCard({ project, selected, favorite, onSelect, onT
     <article
       onClick={() => onSelect(project)}
       className={clsx(
-        'group relative cursor-pointer rounded-2xl border p-4 transition-all duration-200',
+        'group relative cursor-pointer rounded-2xl border p-4 transition-all duration-300 ease-smooth',
         selected
-          ? 'border-brand-500 bg-brand-50/60 shadow-card'
-          : 'border-hairline bg-surface shadow-card hover:border-brand-200 hover:shadow-lift'
+          ? 'border-brand-500 bg-brand-50/50 shadow-lift ring-1 ring-brand-500/25'
+          : 'border-hairline bg-surface shadow-card hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lift'
       )}
     >
       <div className="flex gap-3.5">
-        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-hairline bg-canvas">
+        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-hairline bg-canvas shadow-inset">
           {project.thumbnailUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={project.thumbnailUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
@@ -30,7 +30,7 @@ export default function ProjectCard({ project, selected, favorite, onSelect, onT
 
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="truncate text-sm font-semibold text-ink-900">{project.name}</h3>
+            <h3 className="truncate text-sm font-semibold tracking-tight text-ink-900">{project.name}</h3>
             <button
               onClick={(e) => { e.stopPropagation(); onToggleFavorite(project.id); }}
               className={clsx('shrink-0 rounded-md p-1 transition', favorite ? 'text-brand-600' : 'text-ink-400 hover:text-brand-500')}

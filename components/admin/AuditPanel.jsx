@@ -59,7 +59,7 @@ export default function AuditPanel({ data }) {
           {entries.map((entry, i) => {
             const Icon = ICONS[entry.action] || Pencil;
             return (
-              <li key={`${entry.at}-${i}`} className="flex items-start gap-2.5 rounded-lg border border-hairline bg-surface px-3 py-2">
+              <li key={`${entry.at}-${i}`} className="row-hover flex items-start gap-2.5 rounded-lg border border-hairline bg-surface px-3 py-2">
                 <Icon size={14} className={clsx('mt-0.5 shrink-0', TONE[entry.action] || 'text-ink-400')} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-xs text-ink-900">

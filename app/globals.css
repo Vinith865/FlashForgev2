@@ -4,7 +4,7 @@
 
 :root {
   --accent: #2563eb;
-  --accent-soft: #eff6ff;
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @layer base {
@@ -13,85 +13,127 @@
   html, body { height: 100%; }
 
   body {
-    @apply bg-canvas text-ink-900 antialiased;
+    @apply bg-canvas text-ink-900;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    text-rendering: optimizeLegibility;
   }
+
+  /* Optical corrections — large type needs tighter tracking to look set,
+     not just typed. */
+  h1 { @apply tracking-tightest; }
+  h2, h3 { @apply tracking-tight; }
+
+  /* Numbers should never jitter as they update. */
+  .tabular, [data-numeric] { font-variant-numeric: tabular-nums; }
 
   ::selection { background: #dbeafe; color: #0f172a; }
 
-  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar { width: 12px; height: 12px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
     background: #cbd5e1;
     border-radius: 999px;
-    border: 3px solid transparent;
+    border: 4px solid transparent;
     background-clip: content-box;
   }
   ::-webkit-scrollbar-thumb:hover { background: #94a3b8; background-clip: content-box; }
 
   input, select, textarea, button { font: inherit; }
 
-  input:focus-visible, select:focus-visible, textarea:focus-visible,
-  button:focus-visible, a:focus-visible {
+  :focus-visible {
     outline: 2px solid #2563eb;
     outline-offset: 2px;
+    border-radius: 6px;
   }
+
+  /* Native select arrow is inconsistent across platforms; draw our own. */
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235B6675' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    padding-right: 2.1rem;
+  }
+
+  input[type='checkbox'] { accent-color: #2563eb; }
 }
 
 @layer components {
   /* ── Surfaces ─────────────────────────────────────────────── */
   .card {
-    @apply rounded-2xl border border-hairline bg-surface shadow-card;
+    @apply relative rounded-2xl border border-hairline bg-surface shadow-card;
+  }
+  /* Hairline of white along the top edge — reads as a lit surface rather
+     than a flat rectangle. */
+  .card::before {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 top-0 h-px rounded-t-2xl;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9) 20%, rgba(255, 255, 255, 0.9) 80%, transparent);
   }
   .card-hover {
-    @apply transition-all duration-200 hover:border-brand-200 hover:shadow-lift;
+    @apply transition-all duration-300 ease-smooth hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lift;
   }
-  /* Kept for API compatibility with the previous theme. */
   .glass { @apply card; }
-  .glass-strong { @apply rounded-2xl border border-hairline bg-surface shadow-lift; }
+  .glass-strong { @apply relative rounded-2xl border border-hairline bg-surface shadow-pop; }
   .edge-light { @apply relative; }
 
   /* ── Text ─────────────────────────────────────────────────── */
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(95deg, #2563eb, #3b82f6 55%, #60a5fa);
+    background-image: linear-gradient(95deg, #1e40af, #2563eb 45%, #3b82f6);
   }
   .label {
     @apply text-[12px] font-medium text-ink-500;
   }
   .label-caps {
-    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-400;
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500;
   }
 
   /* ── Buttons ──────────────────────────────────────────────── */
   .btn {
-    @apply inline-flex select-none items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
-           transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-45;
+    @apply relative inline-flex select-none items-center justify-center gap-2 rounded-xl px-4 py-2.5
+           text-sm font-semibold transition-all duration-200 ease-snap
+           disabled:pointer-events-none disabled:opacity-45;
   }
+  .btn:active { transform: translateY(0.5px) scale(0.995); }
+
   .btn-primary {
-    @apply btn bg-brand-600 text-white shadow-btn hover:bg-brand-800 active:bg-brand-800;
+    @apply btn text-white shadow-btn;
+    background-image: linear-gradient(180deg, #3b82f6, #2563eb);
   }
+  .btn-primary:hover { @apply shadow-btn-hover; background-image: linear-gradient(180deg, #2563eb, #1e40af); }
+
   .btn-ghost {
-    @apply btn border border-hairline bg-surface text-brand-600 hover:border-brand-200 hover:bg-brand-50;
+    @apply btn border border-hairline bg-surface text-ink-700 shadow-inset
+           hover:border-brand-200 hover:bg-brand-50 hover:text-brand-600;
   }
   .btn-text {
-    @apply btn bg-transparent px-2 text-brand-600 hover:bg-brand-50;
+    @apply btn bg-transparent px-2.5 text-brand-600 hover:bg-brand-50;
   }
   .btn-pill {
     @apply btn rounded-full bg-brand-100 px-4 py-1.5 text-xs text-brand-800 hover:bg-brand-200;
   }
   .btn-danger {
-    @apply btn bg-red-500 text-white hover:bg-red-600;
+    @apply btn text-white;
+    background-image: linear-gradient(180deg, #ef4444, #dc2626);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.1), 0 2px 6px -1px rgba(220, 38, 38, 0.32),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
   }
+  .btn-danger:hover { background-image: linear-gradient(180deg, #dc2626, #b91c1c); }
   .btn-danger-soft {
     @apply btn border border-red-200 bg-red-50 text-red-700 hover:bg-red-100;
   }
-  .btn-sm { @apply rounded-lg px-3 py-1.5 text-xs; }
+  .btn-sm { @apply gap-1.5 rounded-lg px-3 py-1.5 text-xs; }
+  .btn-lg { @apply rounded-xl px-5 py-3 text-[15px]; }
 
   /* ── Form controls ────────────────────────────────────────── */
   .field {
     @apply w-full rounded-xl border border-hairline bg-surface px-3.5 py-2.5 text-sm text-ink-900
-           placeholder:text-ink-400 transition-shadow;
+           shadow-inset transition-all duration-150 placeholder:text-ink-400;
   }
+  .field:hover { @apply border-slate-300; }
   .field:focus {
     @apply border-brand-500 shadow-focus outline-none;
   }
@@ -99,8 +141,9 @@
 
   /* ── Chips ────────────────────────────────────────────────── */
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-lg border border-hairline bg-surface px-3 py-1
-           text-xs font-medium text-ink-500 transition-all hover:border-brand-200 hover:text-brand-600;
+    @apply inline-flex items-center gap-1.5 rounded-lg border border-hairline bg-surface px-3 py-1.5
+           text-xs font-medium text-ink-500 shadow-inset transition-all duration-200
+           hover:border-brand-200 hover:bg-brand-50 hover:text-brand-600;
   }
   .chip-active {
     @apply border-brand-200 bg-brand-50 text-brand-600;
@@ -108,15 +151,27 @@
   .chip-tag {
     @apply inline-flex items-center gap-1 rounded-md bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-600;
   }
-  /* Solid pill used for the quick-filter row */
   .chip-solid {
-    @apply inline-flex items-center rounded-lg bg-brand-600 px-3 py-1 text-xs font-semibold text-white;
+    @apply inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow-btn;
+    background-image: linear-gradient(180deg, #3b82f6, #2563eb);
+  }
+
+  /* ── Segmented control ────────────────────────────────────── */
+  .segment {
+    @apply grid gap-1 rounded-xl border border-hairline bg-canvas p-1;
+  }
+  .segment-item {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg py-2 text-sm font-medium
+           text-ink-500 transition-all duration-200 ease-smooth hover:text-ink-700;
+  }
+  .segment-item-active {
+    @apply bg-surface text-brand-600 shadow-card;
   }
 
   /* ── Tabs ─────────────────────────────────────────────────── */
   .tab {
-    @apply relative -mb-px border-b-2 border-transparent px-4 py-3 text-sm font-medium text-ink-500
-           transition-colors hover:text-ink-700;
+    @apply relative -mb-px border-b-2 border-transparent px-4 py-3.5 text-sm font-medium text-ink-500
+           transition-colors duration-200 hover:text-ink-900;
   }
   .tab-active {
     @apply border-brand-600 text-brand-600;
@@ -125,10 +180,19 @@
   /* ── Misc ─────────────────────────────────────────────────── */
   .divider { @apply h-px w-full bg-hairline; }
   .scroll-thin { scrollbar-width: thin; }
-  .terminal-line { @apply whitespace-pre-wrap break-words font-mono text-[12.5px] leading-[1.6]; }
+  .terminal-line { @apply whitespace-pre-wrap break-words font-mono text-[12.5px] leading-[1.65]; }
 
   .stat-card {
-    @apply rounded-2xl border border-hairline bg-surface px-6 py-4 text-center shadow-card;
+    @apply relative rounded-2xl border border-hairline bg-surface px-6 py-4 text-center shadow-card;
+  }
+
+  .skeleton {
+    @apply animate-skeleton rounded-2xl bg-slate-100;
+  }
+
+  /* Row that highlights on hover without shifting layout */
+  .row-hover {
+    @apply transition-colors duration-150 hover:bg-canvas;
   }
 }
 
@@ -138,4 +202,5 @@
   .animate-delay-100 { animation-delay: 100ms; }
   .animate-delay-200 { animation-delay: 200ms; }
   .animate-delay-300 { animation-delay: 300ms; }
+  .nums { font-variant-numeric: tabular-nums; }
 }

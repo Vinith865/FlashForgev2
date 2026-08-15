@@ -6,13 +6,13 @@ import StatusPill from '@/components/ui/StatusPill';
 
 export default function Header({ status, chip, portInfo }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-hairline bg-surface/85 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-hairline bg-surface/80 backdrop-blur-xl backdrop-saturate-150">
       <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-3">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-600 text-white shadow-btn">
+          <span className="grid h-9 w-9 place-items-center rounded-xl text-white shadow-btn transition-transform duration-300 ease-smooth hover:scale-[1.04]" style={{ backgroundImage: 'linear-gradient(180deg,#3b82f6,#2563eb)' }}>
             <Cpu size={18} strokeWidth={2.2} />
           </span>
-          <span className="text-lg font-semibold tracking-tight text-ink-900">
+          <span className="text-[17px] font-semibold tracking-tight text-ink-900">
             Flash<span className="text-brand-600">Forge</span>
           </span>
         </Link>

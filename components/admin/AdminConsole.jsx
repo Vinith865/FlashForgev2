@@ -251,7 +251,7 @@ export default function AdminConsole() {
     <main className="mx-auto max-w-[1400px] px-4 py-8 sm:px-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-ink-900">Admin console</h1>
+          <h1 className="text-[30px] font-bold leading-tight tracking-tightest text-ink-900">Admin console</h1>
           <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-500">
             <span className="inline-flex items-center gap-1.5">
               <Database size={12} /> {health?.storage || '…'}
@@ -334,7 +334,7 @@ export default function AdminConsole() {
               <ul className="scroll-thin max-h-[calc(100vh-16rem)] space-y-2 overflow-y-auto px-5 py-4">
                 {projects.map((project) => (
                   <li key={project.id} className={clsx(
-                    'rounded-xl border bg-surface p-3 transition-colors',
+                    'rounded-xl border bg-surface p-3 transition-all duration-200 ease-smooth hover:shadow-card',
                     editing === project.id ? 'border-brand-500 bg-brand-50/50' : 'border-hairline'
                   )}>
                     <div className="flex items-center gap-3">

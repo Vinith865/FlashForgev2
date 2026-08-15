@@ -33,7 +33,7 @@ export default function HistoryPanel({ history, stats, onClear }) {
           { label: 'Failed', value: stats.failed, tone: 'text-red-500' },
         ].map((s) => (
           <div key={s.label} className="rounded-xl border border-hairline bg-canvas px-3 py-2.5 text-center">
-            <p className={clsx('font-mono text-lg font-semibold tabular-nums', s.tone)}>{s.value}</p>
+            <p className={clsx('font-mono text-lg font-semibold nums', s.tone)}>{s.value}</p>
             <p className="label mt-0.5">{s.label}</p>
           </div>
         ))}
@@ -41,7 +41,7 @@ export default function HistoryPanel({ history, stats, onClear }) {
 
       <ul className="scroll-thin max-h-64 space-y-1.5 overflow-y-auto pr-1">
         {history.map((h) => (
-          <li key={h.id} className="flex items-center gap-2.5 rounded-lg border border-hairline bg-surface px-3 py-2">
+          <li key={h.id} className="row-hover flex items-center gap-2.5 rounded-lg border border-hairline bg-surface px-3 py-2">
             {h.status === 'success' ? (
               <CheckCircle2 size={15} className="shrink-0 text-emerald-500" />
             ) : (
