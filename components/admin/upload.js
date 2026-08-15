@@ -2,6 +2,9 @@
 
 /** Shared upload helpers for the admin console. */
 
+export const BLOB_TOKEN_HINT =
+  'Publishing needs the Blob read/write token. In Vercel open Storage → your Blob store → the .env.local tab, copy BLOB_READ_WRITE_TOKEN, add it under Settings → Environment Variables, then redeploy.';
+
 export const guessOffset = (name) =>
   /bootloader/i.test(name) ? 0x1000
   : /partition/i.test(name) ? 0x8000
@@ -37,13 +40,28 @@ export async function buildUploadPayload({ entries, image, slug, token, useBlob,
   if (useBlob) {
     const { upload } = await import('@vercel/blob/client');
 
+    // The SDK reports any non-OK handshake as "Failed to retrieve the client
+    // token", which hides the actual cause. Surface the real one.
+    const wrap = async (fn) => {
+      try {
+        return await fn();
+      } catch (error) {
+        if (/client token/i.test(error?.message || '')) {
+          throw new Error(BLOB_TOKEN_HINT);
+        }
+        throw error;
+      }
+    };
+
     for (const entry of entries) {
-      const result = await upload(`firmware/${slug}/${entry.file.name}`, entry.file, {
-        access: 'public',
-        handleUploadUrl: '/api/admin/blob-upload',
-        clientPayload: token,
-        contentType: 'application/octet-stream',
-      });
+      const result = await wrap(() =>
+        upload(`firmware/${slug}/${entry.file.name}`, entry.file, {
+          access: 'public',
+          handleUploadUrl: '/api/admin/blob-upload',
+          clientPayload: token,
+          contentType: 'application/octet-stream',
+        })
+      );
       payload.uploadedFiles.push({
         url: result.url,
         filename: entry.file.name,
@@ -54,11 +72,13 @@ export async function buildUploadPayload({ entries, image, slug, token, useBlob,
     }
 
     if (image) {
-      const result = await upload(`project-images/${slug}-${image.name}`, image, {
-        access: 'public',
-        handleUploadUrl: '/api/admin/blob-upload',
-        clientPayload: token,
-      });
+      const result = await wrap(() =>
+        upload(`project-images/${slug}-${image.name}`, image, {
+          access: 'public',
+          handleUploadUrl: '/api/admin/blob-upload',
+          clientPayload: token,
+        })
+      );
       payload.imageUrl = result.url;
       tick(image.name);
     }

@@ -14,7 +14,7 @@ import LoginScreen from './LoginScreen';
 import ProjectForm, { BLANK } from './ProjectForm';
 import FileManager from './FileManager';
 import AuditPanel from './AuditPanel';
-import { buildUploadPayload, slugOf } from './upload';
+import { BLOB_TOKEN_HINT, buildUploadPayload, slugOf } from './upload';
 import {
   adminAddFiles, adminAudit, adminDeleteFile, adminDeleteProject, adminListProjects,
   adminLogin, adminLoginConfig, adminRevokeSessions, adminSaveProject,
@@ -141,6 +141,9 @@ export default function AdminConsole() {
     if (!form.name.trim()) return flash('error', 'Give the project a name.');
     if (!form.supportedBoards.length) return flash('error', 'Select at least one board.');
     if (!editing && !firmware.length) return flash('error', 'Attach at least one firmware file.');
+    if (!editing && health?.storage === 'vercel-blob' && health?.blob?.clientUploads === false) {
+      return flash('error', BLOB_TOKEN_HINT);
+    }
 
     setBusy(true);
     setProgress(0);
@@ -263,6 +266,9 @@ export default function AdminConsole() {
             {health?.storage === 'local-filesystem' && (
               <span className="text-amber-600">not persisted on Vercel</span>
             )}
+            {health?.storage === 'unconfigured' && (
+              <span className="text-red-600">no Blob store connected</span>
+            )}
           </p>
         </div>
         <div className="flex gap-2">
@@ -273,6 +279,12 @@ export default function AdminConsole() {
           <button onClick={() => signOut()} className="btn-ghost btn-sm"><LogOut size={13} /> Sign out</button>
         </div>
       </div>
+
+      {health?.storage === 'vercel-blob' && health?.blob?.clientUploads === false && (
+        <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-900">
+          <strong className="font-semibold">Uploads are disabled.</strong> {BLOB_TOKEN_HINT}
+        </div>
+      )}
 
       {notice && (
         <div className={clsx(
