@@ -1,5 +1,8 @@
+const v = (name) => `rgb(var(--c-${name}) / <alpha-value>)`;
+
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     './app/**/*.{js,jsx}',
     './components/**/*.{js,jsx}',
@@ -12,27 +15,32 @@ export default {
         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       colors: {
-        // Page + surface layers
-        canvas: '#F5F8FD',
-        surface: '#FFFFFF',
-        hairline: '#E3E9F2',
-        // Blue ramp
+        // Every token resolves through a CSS variable, so switching the
+        // theme flips the whole interface without touching a single class.
+        canvas: v('canvas'),
+        surface: v('surface'),
+        hairline: v('hairline'),
         brand: {
-          50: '#EFF6FF',
-          100: '#DBEAFE',
-          200: '#BFDBFE',
-          400: '#60A5FA',
-          500: '#3B82F6',
-          600: '#2563EB',
-          800: '#1E40AF',
+          50: v('brand-50'),
+          100: v('brand-100'),
+          200: v('brand-200'),
+          400: v('brand-400'),
+          500: v('brand-500'),
+          600: v('brand-600'),
+          700: v('brand-700'),
+          800: v('brand-800'),
         },
-        // Text
         ink: {
-          900: '#0F172A',
-          700: '#334155',
-          500: '#5B6675',
-          400: '#94A3B8',
+          900: v('ink-900'),
+          700: v('ink-700'),
+          500: v('ink-500'),
+          400: v('ink-400'),
         },
+        // Semantic tints, so status colours work on both grounds
+        ok: { bg: v('ok-bg'), fg: v('ok-fg'), line: v('ok-line') },
+        warn: { bg: v('warn-bg'), fg: v('warn-fg'), line: v('warn-line') },
+        danger: { bg: v('danger-bg'), fg: v('danger-fg'), line: v('danger-line') },
+        muted: v('muted'),
         // The console stays dark on purpose — it is the one high-contrast
         // block in the interface, which is what makes log output readable.
         console: {
@@ -49,14 +57,14 @@ export default {
       boxShadow: {
         // Layered: a tight contact shadow plus a wide diffuse one. A single
         // shadow reads flat and muddy on a light ground.
-        card: '0 1px 1px rgba(15,23,42,0.03), 0 2px 4px rgba(15,23,42,0.03), 0 8px 16px -8px rgba(15,23,42,0.06)',
-        lift: '0 1px 2px rgba(15,23,42,0.04), 0 8px 16px -6px rgba(15,23,42,0.08), 0 24px 40px -20px rgba(15,23,42,0.12)',
-        pop: '0 2px 4px rgba(15,23,42,0.05), 0 16px 32px -10px rgba(15,23,42,0.14), 0 40px 64px -32px rgba(15,23,42,0.16)',
-        focus: '0 0 0 3px rgba(37,99,235,0.16)',
-        btn: '0 1px 2px rgba(15,23,42,0.10), 0 2px 6px -1px rgba(37,99,235,0.32), inset 0 1px 0 rgba(255,255,255,0.18)',
-        'btn-hover': '0 2px 4px rgba(15,23,42,0.12), 0 6px 14px -2px rgba(37,99,235,0.38), inset 0 1px 0 rgba(255,255,255,0.2)',
-        inset: 'inset 0 1px 0 rgba(255,255,255,0.9)',
-        ring: '0 0 0 1px rgba(15,23,42,0.05)',
+        card: '0 1px 1px rgb(var(--shadow-tint) / 0.03), 0 2px 4px rgb(var(--shadow-tint) / 0.03), 0 8px 16px -8px rgb(var(--shadow-tint) / 0.06)',
+        lift: '0 1px 2px rgb(var(--shadow-tint) / 0.04), 0 8px 16px -6px rgb(var(--shadow-tint) / 0.08), 0 24px 40px -20px rgb(var(--shadow-tint) / 0.12)',
+        pop: '0 2px 4px rgb(var(--shadow-tint) / 0.05), 0 16px 32px -10px rgb(var(--shadow-tint) / 0.14), 0 40px 64px -32px rgb(var(--shadow-tint) / 0.16)',
+        focus: '0 0 0 3px rgb(37 99 235 / 0.16)',
+        btn: '0 1px 2px rgb(var(--shadow-tint) / 0.10), 0 2px 6px -1px rgb(37 99 235 / 0.32), inset 0 1px 0 rgb(255 255 255 / 0.18)',
+        'btn-hover': '0 2px 4px rgb(var(--shadow-tint) / 0.12), 0 6px 14px -2px rgb(37 99 235 / 0.38), inset 0 1px 0 rgb(255 255 255 / 0.2)',
+        inset: 'inset 0 1px 0 rgb(255 255 255 / 0.9)',
+        ring: '0 0 0 1px rgb(var(--shadow-tint) / 0.05)',
       },
       transitionTimingFunction: {
         smooth: 'cubic-bezier(0.22, 1, 0.36, 1)',

@@ -63,7 +63,7 @@ export default function DropZone({ files, onAdd, onUpdateOffset, onRemove, mode 
                 </div>
               )}
 
-              <button onClick={() => onRemove(entry.id)} className="rounded p-1 text-ink-400 transition hover:text-red-500">
+              <button onClick={() => onRemove(entry.id)} className="rounded p-1 text-ink-400 transition hover:text-danger-fg">
                 <X size={14} />
               </button>
             </li>

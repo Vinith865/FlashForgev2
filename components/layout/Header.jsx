@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { Settings, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 import StatusPill from '@/components/ui/StatusPill';
 
 export default function Header({ status, chip, portInfo }) {
@@ -39,9 +40,7 @@ export default function Header({ status, chip, portInfo }) {
           <Link href="/admin" className="btn-ghost btn-sm hidden sm:inline-flex" title="Admin console">
             <ShieldCheck size={14} /> Admin
           </Link>
-          <span className="hidden rounded-lg border border-hairline bg-surface p-2 text-ink-400 lg:block">
-            <Settings size={15} />
-          </span>
+          <ThemeToggle />
         </div>
       </div>
     </header>

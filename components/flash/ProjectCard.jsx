@@ -47,7 +47,7 @@ export default function ProjectCard({ project, selected, favorite, onSelect, onT
             {boards.slice(0, 2).map((b) => (
               <span key={b} className="chip-tag">{b}</span>
             ))}
-            <span className="chip-tag bg-slate-100 text-ink-500">v{project.version}</span>
+            <span className="chip-tag bg-muted text-ink-500">v{project.version}</span>
             {boards.length > 2 && <span className="text-[10px] text-ink-500">+{boards.length - 2}</span>}
           </div>
         </div>

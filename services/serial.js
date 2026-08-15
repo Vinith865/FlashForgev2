@@ -127,6 +127,28 @@ async function resetIntoBootloader(log) {
   }
 }
 
+/**
+ * Boots the application, as opposed to resetIntoBootloader().
+ *
+ * Connecting deliberately drops the chip into ROM download mode so esptool
+ * can talk to it — but the ROM bootloader never runs your sketch, so a serial
+ * monitor opened straight afterwards sits silent forever. Pulsing EN with
+ * GPIO0 held high restarts the board into normal run mode.
+ */
+export async function resetIntoRunMode(log = () => {}) {
+  if (!port) return;
+  try {
+    // DTR false keeps GPIO0 high (run, not download); RTS pulses EN.
+    await port.setSignals({ dataTerminalReady: false, requestToSend: true });
+    await sleep(120);
+    await port.setSignals({ dataTerminalReady: false, requestToSend: false });
+    await sleep(250);
+    log('Board reset into run mode.', 'dim');
+  } catch {
+    log('This adapter cannot auto-reset. Tap the RESET button on the board.', 'warning');
+  }
+}
+
 async function resetArduino(log) {
   if (!port) return;
   log('Toggling DTR to reset the Arduino bootloader…', 'dim');
@@ -233,7 +255,9 @@ export async function detectChip(log = console.log, options = {}) {
 
 /* ── Serial monitor ─────────────────────────────────────────────────── */
 
-export async function startMonitor({ baudRate = DEFAULT_BAUD, onData, onError, onOpen } = {}) {
+export async function startMonitor({
+  baudRate = DEFAULT_BAUD, onData, onError, onOpen, onSilence, resetFirst = true,
+} = {}) {
   if (!port) throw new Error('Connect a device first.');
   if (monitorRunning) return;
 
@@ -245,13 +269,25 @@ export async function startMonitor({ baudRate = DEFAULT_BAUD, onData, onError, o
     });
   });
 
+  if (!port.readable) throw new Error('Serial port opened but is not readable.');
+
   monitorRunning = true;
   monitorAbort = { stop: false, reader: null };
   onOpen?.(baudRate);
 
+  // Leaving download mode is what actually makes output appear.
+  if (resetFirst) await resetIntoRunMode();
+
   const decoder = new TextDecoder();
   const reader = port.readable.getReader();
   monitorAbort.reader = reader;
+
+  // If nothing arrives at all, the usual causes are a wrong baud rate or a
+  // board still sitting in download mode. Say so rather than staying blank.
+  let received = 0;
+  const silenceTimer = setTimeout(() => {
+    if (!received && monitorRunning) onSilence?.(baudRate);
+  }, 4000);
 
   (async () => {
     let buffer = '';
@@ -261,6 +297,7 @@ export async function startMonitor({ baudRate = DEFAULT_BAUD, onData, onError, o
         if (done) break;
         if (!value) continue;
 
+        received += value.length;
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split(/\r?\n/);
         buffer = lines.pop() ?? '';
@@ -276,6 +313,7 @@ export async function startMonitor({ baudRate = DEFAULT_BAUD, onData, onError, o
     } catch (err) {
       if (!monitorAbort.stop) onError?.(err);
     } finally {
+      clearTimeout(silenceTimer);
       try { reader.releaseLock(); } catch {}
       monitorRunning = false;
     }

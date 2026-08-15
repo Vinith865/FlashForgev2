@@ -48,7 +48,7 @@ export default function FileManager({ project, onAdd, onSetOffset, onRemove, bus
                     });
                   }}
                   disabled={busy}
-                  className="rounded p-1 text-emerald-600 transition hover:bg-emerald-50"
+                  className="rounded p-1 text-ok-fg transition hover:bg-ok-bg"
                   title="Save offset"
                 >
                   <Check size={14} />
@@ -59,7 +59,7 @@ export default function FileManager({ project, onAdd, onSetOffset, onRemove, bus
                 onClick={() => onRemove(file.filename)}
                 disabled={busy || files.length === 1}
                 title={files.length === 1 ? 'A project needs at least one file' : 'Remove file'}
-                className="rounded p-1 text-ink-400 transition hover:text-red-500 disabled:opacity-30"
+                className="rounded p-1 text-ink-400 transition hover:text-danger-fg disabled:opacity-30"
               >
                 <Trash2 size={14} />
               </button>

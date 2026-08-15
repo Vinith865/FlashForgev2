@@ -26,7 +26,7 @@ export default function Modal({ open, onClose, title, subtitle, children, footer
             <h3 className="truncate text-base font-semibold text-ink-900">{title}</h3>
             {subtitle && <p className="mt-0.5 truncate text-xs text-ink-500">{subtitle}</p>}
           </div>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-ink-400 transition hover:bg-slate-100 hover:text-ink-700">
+          <button onClick={onClose} className="rounded-lg p-1.5 text-ink-400 transition hover:bg-muted hover:text-ink-700">
             <X size={16} />
           </button>
         </div>

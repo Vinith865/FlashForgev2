@@ -23,14 +23,14 @@ export default function StepIndicator({ current, className }) {
               className={clsx(
                 'flex flex-1 items-center gap-3 rounded-xl border px-3.5 py-2.5 transition-all duration-300 ease-smooth',
                 active && 'border-brand-500 bg-brand-50 shadow-card',
-                done && 'border-emerald-200 bg-emerald-50/60',
+                done && 'border-ok-line bg-ok-bg',
                 !active && !done && 'border-hairline bg-surface'
               )}
             >
               <span
                 className={clsx(
                   'grid h-7 w-7 shrink-0 place-items-center rounded-lg text-white transition-colors',
-                  done ? 'bg-emerald-500' : active ? 'bg-brand-600' : 'bg-slate-300'
+                  done ? 'bg-ok-fg' : active ? 'bg-brand-600' : 'bg-ink-400'
                 )}
               >
                 <Icon size={14} strokeWidth={2.4} />
@@ -39,7 +39,7 @@ export default function StepIndicator({ current, className }) {
                 <p
                   className={clsx(
                     'truncate text-xs font-semibold',
-                    done ? 'text-emerald-700' : active ? 'text-brand-700' : 'text-ink-500'
+                    done ? 'text-ok-fg' : active ? 'text-brand-700' : 'text-ink-500'
                   )}
                 >
                   {step.label}
@@ -52,7 +52,7 @@ export default function StepIndicator({ current, className }) {
               <span
                 className={clsx(
                   'hidden h-px w-4 shrink-0 transition-colors sm:block',
-                  done ? 'bg-emerald-300' : 'bg-hairline'
+                  done ? 'bg-ok-line' : 'bg-hairline'
                 )}
               />
             )}

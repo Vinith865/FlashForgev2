@@ -115,11 +115,11 @@ export default function FlasherApp() {
         <StepIndicator current={f.step} className="mb-6 animate-slideUp animate-delay-100" />
 
         {!f.isSupported && (
-          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 animate-slideUp">
-            <AlertTriangle size={18} className="mt-0.5 shrink-0 text-amber-600" />
+          <div className="mb-6 flex items-start gap-3 rounded-2xl tint-warn px-5 py-4 animate-slideUp">
+            <AlertTriangle size={18} className="mt-0.5 shrink-0 text-warn-fg" />
             <div>
-              <p className="text-sm font-semibold text-amber-900">Web Serial isn&apos;t available here</p>
-              <p className="mt-1 text-xs leading-relaxed text-amber-800">
+              <p className="text-sm font-semibold text-warn-fg">Web Serial isn&apos;t available here</p>
+              <p className="mt-1 text-xs leading-relaxed text-warn-fg">
                 Use Chrome, Edge or Opera on desktop. Firefox, Safari and all mobile browsers do not
                 implement the Web Serial API. The site must also be served over HTTPS (or localhost).
               </p>
@@ -224,6 +224,7 @@ export default function FlasherApp() {
                     onToggle={f.toggleMonitor}
                     onSend={f.sendMonitorLine}
                     onClear={f.clearMonitor}
+                    onResetBoard={f.resetBoard}
                     canUse={f.isConnected && f.status !== STATUS.FLASHING}
                   />
                 </div>

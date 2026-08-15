@@ -15,6 +15,7 @@ import ProjectForm, { BLANK } from './ProjectForm';
 import FileManager from './FileManager';
 import AuditPanel from './AuditPanel';
 import { BLOB_TOKEN_HINT, SERVER_UPLOAD_LIMIT, buildUploadPayload, slugOf, totalBytes } from './upload';
+import ThemeToggle from '@/components/layout/ThemeToggle';
 import {
   adminAddFiles, adminAudit, adminDeleteFile, adminDeleteProject, adminListProjects,
   adminLogin, adminLoginConfig, adminRevokeSessions, adminSaveProject,
@@ -265,19 +266,20 @@ export default function AdminConsole() {
             <span className="inline-flex items-center gap-1.5">
               <Database size={12} /> {health?.storage || '…'}
             </span>
-            <span className={clsx('inline-flex items-center gap-1.5', health?.twoFactorEnabled ? 'text-emerald-600' : 'text-amber-600')}>
+            <span className={clsx('inline-flex items-center gap-1.5', health?.twoFactorEnabled ? 'text-ok-fg' : 'text-warn-fg')}>
               {health?.twoFactorEnabled ? <ShieldCheck size={12} /> : <ShieldOff size={12} />}
               {health?.twoFactorEnabled ? '2FA active' : '2FA off'}
             </span>
             {health?.storage === 'local-filesystem' && (
-              <span className="text-amber-600">not persisted on Vercel</span>
+              <span className="text-warn-fg">not persisted on Vercel</span>
             )}
             {health?.storage === 'unconfigured' && (
-              <span className="text-red-600">no Blob store connected</span>
+              <span className="text-danger-fg">no Blob store connected</span>
             )}
           </p>
         </div>
         <div className="flex gap-2">
+          <ThemeToggle compact />
           <Link href="/" className="btn-ghost btn-sm"><ArrowLeft size={13} /> Flasher</Link>
           <button onClick={revokeSessions} className="btn-ghost btn-sm" title="Invalidate every token">
             <ShieldOff size={13} /> Revoke all
@@ -287,7 +289,7 @@ export default function AdminConsole() {
       </div>
 
       {health?.storage === 'vercel-blob' && health?.blob?.clientUploads === false && (
-        <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-900">
+        <div className="mb-5 rounded-xl tint-warn px-4 py-3 text-xs leading-relaxed text-warn-fg">
           <strong className="font-semibold">Uploads limited to 3 MB.</strong> Your Blob store is
           connected over OIDC, so files are routed through the server. Add{' '}
           <span className="font-mono">BLOB_READ_WRITE_TOKEN</span> to stream larger firmware
@@ -298,7 +300,7 @@ export default function AdminConsole() {
       {notice && (
         <div className={clsx(
           'mb-5 flex items-start justify-between gap-3 rounded-xl px-4 py-3 text-xs animate-slideUp',
-          notice.type === 'error' ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'
+          notice.type === 'error' ? 'tint-danger' : 'tint-ok'
         )}>
           <span className="leading-relaxed">{notice.text}</span>
           <button onClick={() => setNotice(null)} className="shrink-0 opacity-60 hover:opacity-100"><X size={13} /></button>
@@ -341,7 +343,7 @@ export default function AdminConsole() {
                 </button>
               ))}
               {drafts > 0 && tab === 'projects' && (
-                <span className="ml-auto rounded-md bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+                <span className="ml-auto rounded-md bg-warn-bg px-2 py-0.5 text-[10px] font-semibold text-warn-fg">
                   {drafts} draft
                 </span>
               )}
@@ -371,7 +373,7 @@ export default function AdminConsole() {
                         <p className="flex items-center gap-1.5 truncate text-sm font-semibold text-ink-900">
                           {project.name}
                           {project.draft && (
-                            <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-700">draft</span>
+                            <span className="rounded bg-warn-line px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-warn-fg">draft</span>
                           )}
                         </p>
                         <p className="truncate font-mono text-[11px] text-ink-500">
@@ -381,7 +383,7 @@ export default function AdminConsole() {
 
                       <div className="flex shrink-0 items-center gap-0.5">
                         <button onClick={() => toggleDraft(project)} title={project.draft ? 'Publish' : 'Move to drafts'}
-                          className="rounded-lg p-1.5 text-ink-400 transition hover:bg-slate-100 hover:text-ink-700">
+                          className="rounded-lg p-1.5 text-ink-400 transition hover:bg-muted hover:text-ink-700">
                           {project.draft ? <EyeOff size={13} /> : <Eye size={13} />}
                         </button>
                         <button onClick={() => startEdit(project)} title="Edit"
@@ -389,7 +391,7 @@ export default function AdminConsole() {
                           <Pencil size={13} />
                         </button>
                         <button onClick={() => remove(project)} title="Delete"
-                          className="rounded-lg p-1.5 text-ink-400 transition hover:bg-red-50 hover:text-red-500">
+                          className="rounded-lg p-1.5 text-ink-400 transition hover:bg-danger-bg hover:text-danger-fg">
                           <Trash2 size={13} />
                         </button>
                       </div>

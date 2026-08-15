@@ -17,14 +17,17 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: '#F5F8FD',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#F5F8FD' },
+    { media: '(prefers-color-scheme: dark)', color: '#0B1220' },
+  ],
   width: 'device-width',
   initialScale: 1,
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -36,6 +39,13 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="min-h-screen bg-canvas">
+        {/* Applies the saved theme before first paint so there is no flash
+            of the wrong background on load. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var m=localStorage.getItem('te-flasher:theme')||'system';var d=m==='dark'||(m==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`,
+          }}
+        />
         <Background />
         {children}
       </body>

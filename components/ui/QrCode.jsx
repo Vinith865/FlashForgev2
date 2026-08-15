@@ -36,7 +36,7 @@ export default function QrCode({ value, size = 168 }) {
         // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt="Share QR code" width={size} height={size} className="rounded-md" />
       ) : (
-        <div className="h-full w-full animate-pulse rounded-md bg-slate-200" />
+        <div className="h-full w-full animate-pulse rounded-md bg-muted" />
       )}
     </div>
   );

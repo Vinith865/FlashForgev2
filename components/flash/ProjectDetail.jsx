@@ -114,7 +114,7 @@ export default function ProjectDetail({ project, open, onClose, onFlash }) {
           <p className="label">Share</p>
           <QrCode value={shareUrl || 'https://example.com'} size={150} />
           <button onClick={copy} className="btn-ghost btn-sm w-full">
-            {copied ? <><Check size={12} className="text-emerald-600" /> Copied</> : <><Copy size={12} /> Copy link</>}
+            {copied ? <><Check size={12} className="text-ok-fg" /> Copied</> : <><Copy size={12} /> Copy link</>}
           </button>
           <p className="text-center text-[11px] leading-relaxed text-ink-500">
             Scan to open this project directly on another machine.

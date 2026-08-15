@@ -29,8 +29,8 @@ export default function HistoryPanel({ history, stats, onClear }) {
       <div className="grid grid-cols-3 gap-2">
         {[
           { label: 'Total', value: stats.total, tone: 'text-ink-900' },
-          { label: 'Success', value: stats.success, tone: 'text-emerald-600' },
-          { label: 'Failed', value: stats.failed, tone: 'text-red-500' },
+          { label: 'Success', value: stats.success, tone: 'text-ok-fg' },
+          { label: 'Failed', value: stats.failed, tone: 'text-danger-fg' },
         ].map((s) => (
           <div key={s.label} className="rounded-xl border border-hairline bg-canvas px-3 py-2.5 text-center">
             <p className={clsx('font-mono text-lg font-semibold nums', s.tone)}>{s.value}</p>
@@ -43,9 +43,9 @@ export default function HistoryPanel({ history, stats, onClear }) {
         {history.map((h) => (
           <li key={h.id} className="row-hover flex items-center gap-2.5 rounded-lg border border-hairline bg-surface px-3 py-2">
             {h.status === 'success' ? (
-              <CheckCircle2 size={15} className="shrink-0 text-emerald-500" />
+              <CheckCircle2 size={15} className="shrink-0 text-ok-fg" />
             ) : (
-              <XCircle size={15} className="shrink-0 text-red-500" />
+              <XCircle size={15} className="shrink-0 text-danger-fg" />
             )}
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-medium text-ink-900">{h.project}</p>

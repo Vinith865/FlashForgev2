@@ -8,7 +8,7 @@ export default function ProgressBar({ value = 0, label, active = false }) {
         <span className="font-mono text-sm font-semibold text-brand-600 nums">{pct}%</span>
       </div>
 
-      <div className="h-2 overflow-hidden rounded-full bg-slate-200/70 shadow-inset">
+      <div className="h-2 overflow-hidden rounded-full bg-muted shadow-inset">
         <div
           className="relative h-full rounded-full bg-brand-600 transition-[width] duration-300 ease-out"
           style={{ width: `${pct}%` }}

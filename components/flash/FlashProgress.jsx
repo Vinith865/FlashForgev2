@@ -43,16 +43,16 @@ export default function FlashProgress({ status, progress, label, lastResult, onR
 
   if (done) {
     return (
-      <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-center animate-slideUp">
-        <span className="mx-auto mb-2 grid h-11 w-11 place-items-center rounded-full bg-emerald-500 text-white">
+      <div className="rounded-xl tint-ok p-4 text-center animate-slideUp">
+        <span className="mx-auto mb-2 grid h-11 w-11 place-items-center rounded-full bg-ok-fg text-white">
           <CheckCircle2 size={22} />
         </span>
-        <p className="text-sm font-semibold text-emerald-800">Flash complete</p>
-        <p className="mt-1 text-xs text-emerald-700">
+        <p className="text-sm font-semibold text-ok-fg">Flash complete</p>
+        <p className="mt-1 text-xs text-ok-fg">
           {lastResult?.bytes ? `${formatBytes(lastResult.bytes)} written` : 'Firmware written'}
           {lastResult?.durationMs ? ` in ${(lastResult.durationMs / 1000).toFixed(1)}s` : ''}
         </p>
-        <p className="mt-2 text-[11px] leading-relaxed text-emerald-700">
+        <p className="mt-2 text-[11px] leading-relaxed text-ok-fg">
           Open the Monitor tab to watch it boot. If nothing happens, tap RESET on the board.
         </p>
       </div>
@@ -61,12 +61,12 @@ export default function FlashProgress({ status, progress, label, lastResult, onR
 
   if (failed) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4 animate-slideUp">
+      <div className="rounded-xl tint-danger p-4 animate-slideUp">
         <div className="flex items-start gap-2.5">
-          <XCircle size={18} className="mt-0.5 shrink-0 text-red-600" />
+          <XCircle size={18} className="mt-0.5 shrink-0 text-danger-fg" />
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-red-800">Flash didn&apos;t complete</p>
-            <p className="mt-1 text-xs leading-relaxed text-red-700">
+            <p className="text-sm font-semibold text-danger-fg">Flash didn&apos;t complete</p>
+            <p className="mt-1 text-xs leading-relaxed text-danger-fg">
               Check the Console tab for the reason. Most failures are the board not being in
               download mode — hold BOOT, tap RESET, release BOOT, then try again.
             </p>
@@ -94,11 +94,11 @@ export default function FlashProgress({ status, progress, label, lastResult, onR
               return (
                 <li key={stage.key} className="flex items-center gap-2 text-xs">
                   {complete ? (
-                    <CheckCircle2 size={13} className="shrink-0 text-emerald-500" />
+                    <CheckCircle2 size={13} className="shrink-0 text-ok-fg" />
                   ) : current ? (
                     <Loader2 size={13} className="shrink-0 animate-spin text-brand-600" />
                   ) : (
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-slate-300" style={{ margin: '0 5.5px' }} />
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-ink-400" style={{ margin: '0 5.5px' }} />
                   )}
                   <span
                     className={clsx(

@@ -167,7 +167,7 @@ export default function ProjectForm({
                   <button
                     type="button"
                     onClick={() => setFirmware((prev) => prev.filter((x) => x.id !== entry.id))}
-                    className="rounded p-1 text-ink-400 hover:text-red-500"
+                    className="rounded p-1 text-ink-400 hover:text-danger-fg"
                   >
                     <X size={13} />
                   </button>
@@ -187,7 +187,7 @@ export default function ProjectForm({
           </button>
           {image && <span className="truncate text-xs text-ink-500">{image.name}</span>}
           {image && (
-            <button type="button" onClick={() => setImage(null)} className="text-ink-400 hover:text-red-500">
+            <button type="button" onClick={() => setImage(null)} className="text-ink-400 hover:text-danger-fg">
               <X size={13} />
             </button>
           )}
@@ -219,7 +219,7 @@ export default function ProjectForm({
         <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-hairline bg-surface px-3.5 py-2.5">
           <input type="checkbox" checked={form.draft} onChange={(e) => setForm({ ...form, draft: e.target.checked })} className="h-4 w-4 rounded accent-amber-500" />
           <span className="text-sm text-ink-700">Save as draft</span>
-          <span className="ml-auto rounded bg-amber-50 px-1.5 text-[10px] font-semibold text-amber-700">hidden</span>
+          <span className="ml-auto rounded bg-warn-bg px-1.5 text-[10px] font-semibold text-warn-fg">hidden</span>
         </label>
       </div>
 

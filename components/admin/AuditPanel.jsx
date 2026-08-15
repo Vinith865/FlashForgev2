@@ -20,11 +20,11 @@ const ICONS = {
 };
 
 const TONE = {
-  'project.delete': 'text-red-500',
-  'file.delete': 'text-red-500',
-  'sessions.revoked': 'text-amber-600',
-  'sessions.revoke_all': 'text-amber-600',
-  'auth.login': 'text-emerald-600',
+  'project.delete': 'text-danger-fg',
+  'file.delete': 'text-danger-fg',
+  'sessions.revoked': 'text-warn-fg',
+  'sessions.revoke_all': 'text-warn-fg',
+  'auth.login': 'text-ok-fg',
 };
 
 export default function AuditPanel({ data }) {
@@ -34,13 +34,13 @@ export default function AuditPanel({ data }) {
   return (
     <div className="space-y-4 px-5 py-4">
       {failures.length > 0 && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
-          <p className="mb-2 flex items-center gap-2 text-xs font-semibold text-amber-900">
+        <div className="rounded-xl tint-warn p-3">
+          <p className="mb-2 flex items-center gap-2 text-xs font-semibold text-warn-fg">
             <AlertTriangle size={13} /> Recent failed sign-ins
           </p>
           <ul className="space-y-1">
             {failures.slice(0, 5).map((f, i) => (
-              <li key={i} className="font-mono text-[10px] text-amber-800">
+              <li key={i} className="font-mono text-[10px] text-warn-fg">
                 {new Date(f.at).toLocaleString()} · {f.ip} · {f.username || '—'} · {f.reason}
               </li>
             ))}

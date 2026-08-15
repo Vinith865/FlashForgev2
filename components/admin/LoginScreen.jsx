@@ -98,7 +98,7 @@ export default function LoginScreen({ onSubmit, config, busy, notice }) {
             <p
               className={clsx(
                 'mt-5 rounded-xl px-3.5 py-2.5 text-xs leading-relaxed',
-                notice.type === 'error' ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'
+                notice.type === 'error' ? 'tint-danger' : 'tint-ok'
               )}
             >
               {notice.text}
@@ -106,7 +106,7 @@ export default function LoginScreen({ onSubmit, config, busy, notice }) {
           )}
 
           {config && !config.adminConfigured && (
-            <p className="mt-5 rounded-xl bg-amber-50 px-3.5 py-2.5 text-[11px] leading-relaxed text-amber-800">
+            <p className="mt-5 rounded-xl tint-warn px-3.5 py-2.5 text-[11px] leading-relaxed text-warn-fg">
               No admin password is configured. Run{' '}
               <span className="font-mono">node scripts/hash-password.mjs</span> and set{' '}
               <span className="font-mono">ADMIN_PASSWORD_HASH</span> plus{' '}

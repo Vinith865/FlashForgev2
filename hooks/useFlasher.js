@@ -13,6 +13,7 @@ import {
   isWebSerialSupported,
   startMonitor,
   stopMonitor,
+  resetIntoRunMode,
   sendSerialLine,
   closePort,
   openPort,
@@ -378,6 +379,11 @@ export function useFlasher() {
           addLog(`Monitor error: ${err.message}`, 'error');
           setMonitorOn(false);
         },
+        onSilence: (baud) => {
+          pushMonitor(`— nothing received at ${baud} baud after 4s —`);
+          pushMonitor('  • Check the baud rate matches Serial.begin() in your sketch');
+          pushMonitor('  • Tap RESET on the board, or press "Reset board" above');
+        },
       });
       setMonitorOn(true);
       setStatus(STATUS.MONITORING);
@@ -398,6 +404,15 @@ export function useFlasher() {
     },
     [pushMonitor, addLog]
   );
+
+  const resetBoard = useCallback(async () => {
+    try {
+      await resetIntoRunMode((m, level) => addLog(m, level));
+      pushMonitor('— board reset —');
+    } catch (err) {
+      addLog(`Reset failed: ${err.message}`, 'error');
+    }
+  }, [addLog, pushMonitor]);
 
   const clearMonitor = useCallback(() => {
     setMonitorLines([]);
@@ -431,7 +446,7 @@ export function useFlasher() {
     connect, reset, inspect, flash, abort,
     selectProject, addCustomFiles, updateCustomOffset, removeCustomFile,
     addLog, clearLogs,
-    toggleMonitor, sendMonitorLine, clearMonitor,
+    toggleMonitor, sendMonitorLine, clearMonitor, resetBoard,
     clearHistory,
   };
 }
