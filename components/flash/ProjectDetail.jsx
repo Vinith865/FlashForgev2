@@ -53,7 +53,11 @@ export default function ProjectDetail({ project, open, onClose, onFlash }) {
         <div className="space-y-5">
           {project.thumbnailUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={project.thumbnailUrl} alt="" className="h-40 w-full rounded-xl border border-hairline object-cover" />
+            <img
+              src={project.thumbnailUrl}
+              alt=""
+              className="aspect-[16/9] w-full rounded-xl border border-hairline bg-canvas object-contain"
+            />
           )}
 
           <p className="text-sm leading-relaxed text-ink-700">

@@ -104,6 +104,10 @@ export default function AdminConsole() {
 
   /* ── Projects ─────────────────────────────────────────────────────── */
 
+  /** Replace one project in local state with the record the API returned. */
+  const applyProject = (updated) =>
+    setProjects((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+
   const resetForm = () => {
     setForm(BLANK);
     setFirmware([]);
@@ -154,11 +158,12 @@ export default function AdminConsole() {
     setProgress(0);
     try {
       if (editing) {
-        await adminUpdateProject(token, editing, {
+        const updated = await adminUpdateProject(token, editing, {
           ...form,
           thumbnailUrl: form.imageUrl,
           supportedBoards: form.supportedBoards,
         });
+        applyProject(updated);
         flash('success', `Updated “${form.name}”.`);
       } else {
         const payload = await buildUploadPayload({
@@ -186,9 +191,11 @@ export default function AdminConsole() {
 
   const toggleDraft = async (project) => {
     try {
-      await adminUpdateProject(token, project.id, { draft: !project.draft });
-      flash('success', project.draft ? `“${project.name}” is now live.` : `“${project.name}” moved to drafts.`);
-      refresh(token);
+      const updated = await adminUpdateProject(token, project.id, { draft: !project.draft });
+      // Trust the response rather than re-reading — Blob writes can take up
+      // to a minute to propagate, so a refresh here often returns stale data.
+      applyProject(updated);
+      flash('success', updated.draft ? `“${updated.name}” moved to drafts.` : `“${updated.name}” is now live.`);
     } catch (err) {
       flash('error', err.message);
     }
@@ -198,9 +205,9 @@ export default function AdminConsole() {
     if (!window.confirm(`Delete “${project.name}” and all of its firmware files?`)) return;
     try {
       await adminDeleteProject(token, project.id);
+      setProjects((prev) => prev.filter((p) => p.id !== project.id));
       if (editing === project.id) resetForm();
       flash('success', 'Project deleted.');
-      refresh(token);
     } catch (err) {
       flash('error', err.message);
     }
@@ -218,9 +225,8 @@ export default function AdminConsole() {
         useBlob: health?.storage === 'vercel-blob',
         clientUploads: health?.blob?.clientUploads !== false,
       });
-      await adminAddFiles(token, projectId, payload);
+      applyProject(await adminAddFiles(token, projectId, payload));
       flash('success', `Added ${entries.length} file(s).`);
-      refresh(token);
     } catch (err) {
       flash('error', err.message);
     } finally {
@@ -230,9 +236,8 @@ export default function AdminConsole() {
 
   const setOffset = async (projectId, filename, offset) => {
     try {
-      await adminSetFileOffset(token, projectId, filename, offset);
+      applyProject(await adminSetFileOffset(token, projectId, filename, offset));
       flash('success', `${filename} → 0x${offset.toString(16)}`);
-      refresh(token);
     } catch (err) {
       flash('error', err.message);
     }
@@ -241,9 +246,8 @@ export default function AdminConsole() {
   const removeFile = async (projectId, filename) => {
     if (!window.confirm(`Remove ${filename} from this project?`)) return;
     try {
-      await adminDeleteFile(token, projectId, filename);
+      applyProject(await adminDeleteFile(token, projectId, filename));
       flash('success', `${filename} removed.`);
-      refresh(token);
     } catch (err) {
       flash('error', err.message);
     }
@@ -361,10 +365,10 @@ export default function AdminConsole() {
                     editing === project.id ? 'border-brand-500 bg-brand-50/50' : 'border-hairline'
                   )}>
                     <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-hairline bg-canvas">
+                      <div className="grid h-12 w-16 shrink-0 place-items-center overflow-hidden rounded-lg border border-hairline bg-canvas">
                         {project.thumbnailUrl ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={project.thumbnailUrl} alt="" className="h-full w-full object-cover" />
+                          <img src={project.thumbnailUrl} alt="" className="h-full w-full object-contain" />
                         ) : (
                           <span className="grid h-full w-full place-items-center text-ink-400"><FileCode2 size={16} /></span>
                         )}
