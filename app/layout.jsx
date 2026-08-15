@@ -10,7 +10,10 @@ export const metadata = {
     title: 'TE Flasher — ESP32 & Arduino Web Flasher',
     description: 'Browser-based firmware flashing with a built-in serial monitor.',
     type: 'website',
+    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'TE Flasher' }],
   },
+  // app/icon.png and app/apple-icon.png are picked up automatically by Next.
+  icons: { icon: '/icon.png', apple: '/apple-icon.png' },
 };
 
 export const viewport = {

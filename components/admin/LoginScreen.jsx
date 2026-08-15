@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
-import { ArrowLeft, KeyRound, Loader2, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, KeyRound, Loader2 } from 'lucide-react';
 
 export default function LoginScreen({ onSubmit, config, busy, notice }) {
   const [step, setStep] = useState('password');
@@ -28,12 +28,8 @@ export default function LoginScreen({ onSubmit, config, busy, notice }) {
       <div className="w-full max-w-md">
         <div className="card animate-slideUp p-9 shadow-pop">
           <div className="mb-7 text-center">
-            <span
-              className="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-2xl text-white shadow-btn"
-              style={{ backgroundImage: 'linear-gradient(180deg,#60a5fa,#3b82f6)' }}
-            >
-              <ShieldCheck size={30} strokeWidth={2.1} />
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="TE Flasher" width={72} height={72} className="mx-auto mb-5 h-[72px] w-[72px]" />
             <h1 className="text-[32px] font-bold leading-tight tracking-tightest text-ink-900">Sign in</h1>
             <p className="mt-2 text-sm text-ink-500">
               {step === 'totp'
