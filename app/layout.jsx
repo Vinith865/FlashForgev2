@@ -1,7 +1,17 @@
 import './globals.css';
 import Background from '@/components/layout/Background';
 
+/**
+ * Absolute base for Open Graph images. Without it Next resolves them against
+ * localhost, so shared links show a broken preview. VERCEL_URL is injected on
+ * every deployment; NEXT_PUBLIC_SITE_URL wins when a custom domain is set.
+ */
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+
 export const metadata = {
+  metadataBase: new URL(siteUrl),
   title: 'Telugu Experiments Flasher — ESP32, ESP8266 & Arduino',
   description:
     'Flash ESP32, ESP8266 and Arduino firmware straight from your browser. No drivers, no IDE, no install — just Web Serial.',
