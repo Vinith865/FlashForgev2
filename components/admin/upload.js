@@ -2,8 +2,17 @@
 
 /** Shared upload helpers for the admin console. */
 
+/**
+ * Vercel caps a serverless request body at 4.5 MB. Base64 inflates by ~33%,
+ * so anything under ~3 MB of raw firmware can safely go through the API
+ * route — which works over an OIDC-connected Blob store with no extra token.
+ * Larger files must stream straight from the browser, and that needs
+ * BLOB_READ_WRITE_TOKEN.
+ */
+export const SERVER_UPLOAD_LIMIT = 3 * 1024 * 1024;
+
 export const BLOB_TOKEN_HINT =
-  'Publishing needs the Blob read/write token. In Vercel open Storage → your Blob store → the .env.local tab, copy BLOB_READ_WRITE_TOKEN, add it under Settings → Environment Variables, then redeploy.';
+  'This upload is too large to route through the server. Add BLOB_READ_WRITE_TOKEN so the browser can stream directly to storage: Vercel → Storage → your Blob store → .env.local tab → copy the token → Settings → Environment Variables → redeploy.';
 
 export const guessOffset = (name) =>
   /bootloader/i.test(name) ? 0x1000
@@ -27,7 +36,22 @@ export const slugOf = (name) =>
  * On Blob deployments the browser streams straight to storage, which
  * sidesteps the 4.5 MB serverless request-body limit.
  */
-export async function buildUploadPayload({ entries, image, slug, token, useBlob, onProgress }) {
+export const totalBytes = (entries = [], image = null) =>
+  entries.reduce((sum, e) => sum + (e.file?.size || 0), 0) + (image?.size || 0);
+
+/**
+ * @param {boolean} clientUploads  whether BLOB_READ_WRITE_TOKEN is available
+ */
+export async function buildUploadPayload({
+  entries, image, slug, token, useBlob, clientUploads = true, onProgress,
+}) {
+  // Direct-to-Blob when we can; otherwise fall back to the API route, which
+  // is fine for typical firmware sizes.
+  const streamDirect = useBlob && clientUploads;
+  if (useBlob && !clientUploads && totalBytes(entries, image) > SERVER_UPLOAD_LIMIT) {
+    throw new Error(BLOB_TOKEN_HINT);
+  }
+
   const payload = { files: [], uploadedFiles: [] };
   const total = entries.length + (image ? 1 : 0);
   let done = 0;
@@ -37,7 +61,7 @@ export async function buildUploadPayload({ entries, image, slug, token, useBlob,
     onProgress?.(Math.round((done / Math.max(1, total)) * 100), label);
   };
 
-  if (useBlob) {
+  if (streamDirect) {
     const { upload } = await import('@vercel/blob/client');
 
     // The SDK reports any non-OK handshake as "Failed to retrieve the client

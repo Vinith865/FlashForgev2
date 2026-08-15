@@ -14,7 +14,7 @@ import LoginScreen from './LoginScreen';
 import ProjectForm, { BLANK } from './ProjectForm';
 import FileManager from './FileManager';
 import AuditPanel from './AuditPanel';
-import { BLOB_TOKEN_HINT, buildUploadPayload, slugOf } from './upload';
+import { BLOB_TOKEN_HINT, SERVER_UPLOAD_LIMIT, buildUploadPayload, slugOf, totalBytes } from './upload';
 import {
   adminAddFiles, adminAudit, adminDeleteFile, adminDeleteProject, adminListProjects,
   adminLogin, adminLoginConfig, adminRevokeSessions, adminSaveProject,
@@ -141,7 +141,11 @@ export default function AdminConsole() {
     if (!form.name.trim()) return flash('error', 'Give the project a name.');
     if (!form.supportedBoards.length) return flash('error', 'Select at least one board.');
     if (!editing && !firmware.length) return flash('error', 'Attach at least one firmware file.');
-    if (!editing && health?.storage === 'vercel-blob' && health?.blob?.clientUploads === false) {
+    if (
+      !editing &&
+      health?.blob?.clientUploads === false &&
+      totalBytes(firmware, image) > SERVER_UPLOAD_LIMIT
+    ) {
       return flash('error', BLOB_TOKEN_HINT);
     }
 
@@ -162,6 +166,7 @@ export default function AdminConsole() {
           slug: slugOf(form.name),
           token,
           useBlob: health?.storage === 'vercel-blob',
+          clientUploads: health?.blob?.clientUploads !== false,
           onProgress: setProgress,
         });
         const saved = await adminSaveProject(token, { ...form, ...payload });
@@ -210,6 +215,7 @@ export default function AdminConsole() {
         slug: projectId,
         token,
         useBlob: health?.storage === 'vercel-blob',
+        clientUploads: health?.blob?.clientUploads !== false,
       });
       await adminAddFiles(token, projectId, payload);
       flash('success', `Added ${entries.length} file(s).`);
@@ -282,7 +288,10 @@ export default function AdminConsole() {
 
       {health?.storage === 'vercel-blob' && health?.blob?.clientUploads === false && (
         <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-900">
-          <strong className="font-semibold">Uploads are disabled.</strong> {BLOB_TOKEN_HINT}
+          <strong className="font-semibold">Uploads limited to 3 MB.</strong> Your Blob store is
+          connected over OIDC, so files are routed through the server. Add{' '}
+          <span className="font-mono">BLOB_READ_WRITE_TOKEN</span> to stream larger firmware
+          straight from the browser.
         </div>
       )}
 
